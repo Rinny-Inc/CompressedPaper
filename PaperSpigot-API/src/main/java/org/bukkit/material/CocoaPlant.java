@@ -2,7 +2,7 @@ package org.bukkit.material;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.avaje.ebean.validation.NotNull;
 
