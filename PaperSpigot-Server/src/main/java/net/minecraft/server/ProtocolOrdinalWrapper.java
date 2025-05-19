@@ -3,7 +3,7 @@ package net.minecraft.server;
 // CraftBukkit - import package private class
 class ProtocolOrdinalWrapper {
 	// Rinny start
-    static final int[] a;
+    /*static final int[] a;
 
     static {
         final EnumProtocol[] protocols = EnumProtocol.values();
@@ -17,6 +17,6 @@ class ProtocolOrdinalWrapper {
                 }
             }
         }
-    }
+    }*/
     // Rinny end
 }

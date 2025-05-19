@@ -37,9 +37,9 @@ public class HandshakeListener implements PacketHandshakingInListener {
             NetworkManager.a( this.networkmanager ).attr( NetworkManager.protocolVersion ).set( packethandshakinginsetprotocol.d() );
         }
         // Spigot end
-        switch (ProtocolOrdinalWrapper.a[packethandshakinginsetprotocol.c().ordinal()]) {
-        case 1:
-            this.networkmanager.a(EnumProtocol.LOGIN);
+        switch (packethandshakinginsetprotocol.c()) {
+        case LOGIN:
+            this.networkmanager.a(packethandshakinginsetprotocol.c());
 
             // CraftBukkit start - Connection throttle
             try {
@@ -125,8 +125,8 @@ public class HandshakeListener implements PacketHandshakingInListener {
             }
             break;
 
-        case 2:
-            this.networkmanager.a(EnumProtocol.STATUS);
+        case STATUS:
+            this.networkmanager.a(packethandshakinginsetprotocol.c());
             this.networkmanager.a(new PacketStatusListener(this.a, this.networkmanager));
             break;
 
