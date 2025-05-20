@@ -51,6 +51,7 @@ import org.bukkit.inventory.InventoryView;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 
+import io.noks.interfaces.ICollect;
 import io.noks.utils.EntityNPC;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.util.com.google.common.base.Charsets;
@@ -1372,70 +1373,69 @@ public class PlayerConnection implements PacketPlayInListener {
 			if (this.player.f(entity) < d0) {
 				final ItemStack itemInHand = this.player.inventory.getItemInHand(); // CraftBukkit
 				switch (packetplayinuseentity.c()) {
-				case INTERACT -> {
-					// CraftBukkit start
-					final PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(this.getPlayer(),
-							entity.getBukkitEntity());
-					this.server.getPluginManager().callEvent(event);
-
-					// Rinny start - dont repeat code
-					if ((event.isCancelled() || this.player.inventory.getItemInHand() == null
-							|| (this.player.inventory.getItemInHand().getItem() != Items.LEASH
-									&& this.player.inventory.getItemInHand().getItem() != Items.NAME_TAG
-									&& this.player.inventory.getItemInHand().getItem() != Item
-											.getItemOf(Blocks.CHEST)))) {
-						final boolean triggerTagOrChestUpdate = itemInHand != null
-								&& (itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient
-										|| itemInHand.getItem() == Item.getItemOf(Blocks.CHEST)
-												&& entity instanceof EntityHorse);
-						final boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH
-								&& entity instanceof EntityInsentient;
-
-						if (triggerLeashUpdate) {
-							this.sendPacket(new PacketPlayOutAttachEntity(1, entity,
-									((EntityInsentient) entity).getLeashHolder()));
+					case INTERACT -> {
+						// CraftBukkit start
+						final PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(this.getPlayer(),
+								entity.getBukkitEntity());
+						this.server.getPluginManager().callEvent(event);
+	
+						// Rinny start - dont repeat code
+						if ((event.isCancelled() || this.player.inventory.getItemInHand() == null
+								|| (this.player.inventory.getItemInHand().getItem() != Items.LEASH
+										&& this.player.inventory.getItemInHand().getItem() != Items.NAME_TAG
+										&& this.player.inventory.getItemInHand().getItem() != Item
+												.getItemOf(Blocks.CHEST)))) {
+							final boolean triggerTagOrChestUpdate = itemInHand != null
+									&& (itemInHand.getItem() == Items.NAME_TAG && entity instanceof EntityInsentient
+											|| itemInHand.getItem() == Item.getItemOf(Blocks.CHEST)
+													&& entity instanceof EntityHorse);
+							final boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH
+									&& entity instanceof EntityInsentient;
+	
+							if (triggerLeashUpdate) {
+								this.sendPacket(new PacketPlayOutAttachEntity(1, entity,
+										((EntityInsentient) entity).getLeashHolder()));
+							}
+							if (triggerTagOrChestUpdate) {
+								this.sendPacket(new PacketPlayOutEntityMetadata(entity, true));
+							}
 						}
-						if (triggerTagOrChestUpdate) {
-							this.sendPacket(new PacketPlayOutEntityMetadata(entity, true));
+						// Rinny end
+						if (event.isCancelled()) {
+							return;
 						}
-					}
-					// Rinny end
-					if (event.isCancelled()) {
+						// CraftBukkit end
+	
+						this.player.q(entity);
+	
+						// CraftBukkit start
+						if (itemInHand != null && itemInHand.count <= -1) {
+							this.player.updateInventory(this.player.activeContainer);
+						}
+						// CraftBukkit end
 						return;
 					}
-					// CraftBukkit end
-
-					this.player.q(entity);
-
-					// CraftBukkit start
-					if (itemInHand != null && itemInHand.count <= -1) {
-						this.player.updateInventory(this.player.activeContainer);
-					}
-					// CraftBukkit end
-					return;
-				}
-				case ATTACK -> {
-					if (entity instanceof EntityItem || entity instanceof EntityExperienceOrb
-							|| entity instanceof EntityArrow || entity == this.player) {
-						this.disconnect("Attempting to attack an invalid entity");
-						this.minecraftServer
-								.warning("Player " + this.player.getName() + " tried to attack an invalid entity");
+					case ATTACK -> {
+						if (entity instanceof ICollect || entity == this.player) {
+							this.disconnect("Attempting to attack an invalid entity");
+							this.minecraftServer
+									.warning("Player " + this.player.getName() + " tried to attack an invalid entity");
+							return;
+						}
+						
+						if (this.player.isBlocking()) {
+							this.player.bA();
+						}
+	
+						this.player.attack(entity);
+	
+						// CraftBukkit start
+						if (itemInHand != null && itemInHand.count <= -1) {
+							this.player.updateInventory(this.player.activeContainer);
+						}
+						// CraftBukkit end
 						return;
 					}
-					
-					if (this.player.isBlocking()) {
-						this.player.bA();
-					}
-
-					this.player.attack(entity);
-
-					// CraftBukkit start
-					if (itemInHand != null && itemInHand.count <= -1) {
-						this.player.updateInventory(this.player.activeContainer);
-					}
-					// CraftBukkit end
-					return;
-				}
 				}
 			}
 		}
