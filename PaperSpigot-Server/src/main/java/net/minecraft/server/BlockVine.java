@@ -250,26 +250,14 @@ public class BlockVine extends Block {
     }
 
     public int getPlacedData(World world, int i, int j, int k, int l, float f, float f1, float f2, int i1) {
-        byte b0 = 0;
-
-        switch (l) {
-        case 2:
-            b0 = 1;
-            break;
-
-        case 3:
-            b0 = 4;
-            break;
-
-        case 4:
-            b0 = 8;
-            break;
-
-        case 5:
-            b0 = 2;
-        }
-
-        return b0 != 0 ? b0 : i1;
+    	final byte b = switch (l) { // Rinny
+    		case 2 -> 1;
+    		case 3 -> 4;
+    		case 4 -> 8;
+    		case 5 -> 2;
+    		default -> 0;
+    	};
+        return b != 0 ? b : i1;
     }
 
     public Item getDropType(int i, Random random, int j) {
