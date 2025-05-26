@@ -135,8 +135,8 @@ public class EntityFallingBlock extends Entity implements IEntitySpecificSpawnPa
                             // CraftBukkit end
                             world.spigotConfig.antiXrayInstance.updateNearbyBlocks(world, i, j, k); // Spigot
 
-                            if (this.id instanceof BlockFalling) {
-                                ((BlockFalling) this.id).a(this.world, i, j, k, this.data);
+                            if (this.id instanceof BlockFalling bf) {
+                                bf.a(this.world, i, j, k, this.data);
                             }
 
                             if (this.tileEntityData != null && this.id instanceof IContainer) {
@@ -146,10 +146,10 @@ public class EntityFallingBlock extends Entity implements IEntitySpecificSpawnPa
                                     NBTTagCompound nbttagcompound = new NBTTagCompound();
 
                                     tileentity.b(nbttagcompound);
-                                    Iterator iterator = this.tileEntityData.c().iterator();
+                                    Iterator<String> iterator = this.tileEntityData.c().iterator();
 
                                     while (iterator.hasNext()) {
-                                        String s = (String) iterator.next();
+                                        String s = iterator.next();
                                         NBTBase nbtbase = this.tileEntityData.get(s);
 
                                         if (!s.equals("x") && !s.equals("y") && !s.equals("z")) {
@@ -181,13 +181,13 @@ public class EntityFallingBlock extends Entity implements IEntitySpecificSpawnPa
             int i = MathHelper.f(f - 1.0F);
 
             if (i > 0) {
-                List arraylist = new ArrayList(this.world.getEntities(this, this.boundingBox));
+                List<Entity> arraylist = new ArrayList<>(this.world.getEntities(this, this.boundingBox));
                 boolean flag = this.id == Blocks.ANVIL;
                 DamageSource damagesource = flag ? DamageSource.ANVIL : DamageSource.FALLING_BLOCK;
-                Iterator iterator = arraylist.iterator();
+                Iterator<Entity> iterator = arraylist.iterator();
 
                 while (iterator.hasNext()) {
-                    Entity entity = (Entity) iterator.next();
+                    Entity entity = iterator.next();
 
                     CraftEventFactory.entityDamage = this; // CraftBukkit
                     entity.damageEntity(damagesource, (float) Math.min(MathHelper.d((float) i * this.fallHurtAmount), this.fallHurtMax));
@@ -269,8 +269,8 @@ public class EntityFallingBlock extends Entity implements IEntitySpecificSpawnPa
 
     public void a(CrashReportSystemDetails crashreportsystemdetails) {
         super.a(crashreportsystemdetails);
-        crashreportsystemdetails.a("Immitating block ID", Integer.valueOf(Block.getId(this.id)));
-        crashreportsystemdetails.a("Immitating block data", Integer.valueOf(this.data));
+        crashreportsystemdetails.a("Immitating block ID", Block.getId(this.id));
+        crashreportsystemdetails.a("Immitating block data", this.data);
     }
 
     public Block f() {

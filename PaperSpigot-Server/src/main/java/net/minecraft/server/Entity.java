@@ -850,7 +850,7 @@ public abstract class Entity {
     public boolean M() {
         return this.inWater;
     }
-
+    
     public boolean N() {
     	// Rinny start - fix web fall damage
     	AxisAlignedBB bb = this.boundingBox.grow(0.0D, -0.4000000059604645D, 0.0D).shrink(0.001D, 0.001D, 0.001D);

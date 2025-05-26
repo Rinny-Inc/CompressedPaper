@@ -3,6 +3,7 @@ package net.minecraft.server;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 // CraftBukkit start
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -156,10 +157,9 @@ public class EntityArrow extends Entity implements IProjectile, IEntitySpecificS
         if (this.shake > 0) {
             --this.shake;
         }
-
+        
         if (this.inGround) {
-            int i = this.world.getData(this.d, this.e, this.f);
-
+        	int i = this.world.getData(this.d, this.e, this.f);
             if (block == this.g && i == this.h) {
                 ++this.at;
                 if (this.at >= world.spigotConfig.arrowDespawnRate) { // First int after shooter
