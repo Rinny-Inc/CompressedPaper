@@ -383,10 +383,10 @@ public abstract class EntityLiving extends Entity {
 
         if (!this.effects.isEmpty()) {
         	final NBTTagList nbttaglist = new NBTTagList();
-        	final Iterator iterator = this.effects.values().iterator();
+        	final Iterator<MobEffect> iterator = this.effects.values().iterator();
 
             while (iterator.hasNext()) {
-                MobEffect mobeffect = (MobEffect) iterator.next();
+                MobEffect mobeffect = iterator.next();
 
                 nbttaglist.add(mobeffect.a(new NBTTagCompound()));
             }
@@ -445,11 +445,11 @@ public abstract class EntityLiving extends Entity {
     }
 
     protected void aO() {
-    	final Iterator iterator = this.effects.keySet().iterator();
+    	final Iterator<Integer> iterator = this.effects.keySet().iterator();
 
         while (iterator.hasNext()) {
-            Integer integer = (Integer) iterator.next();
-            MobEffect mobeffect = (MobEffect) this.effects.get(integer);
+            Integer integer = iterator.next();
+            MobEffect mobeffect = this.effects.get(integer);
 
             if (!mobeffect.tick(this)) {
                 if (!this.world.isStatic) {
@@ -466,13 +466,13 @@ public abstract class EntityLiving extends Entity {
         if (this.updateEffects) {
             if (!this.world.isStatic) {
                 if (this.effects.isEmpty()) {
-                    this.datawatcher.watch(8, Byte.valueOf((byte) 0));
-                    this.datawatcher.watch(7, Integer.valueOf(0));
+                    this.datawatcher.watch(8, (byte) 0);
+                    this.datawatcher.watch(7, 0);
                     this.setInvisible(false);
                 } else {
                     i = PotionBrewer.a(this.effects.values());
-                    this.datawatcher.watch(8, Byte.valueOf((byte) (PotionBrewer.b(this.effects.values()) ? 1 : 0)));
-                    this.datawatcher.watch(7, Integer.valueOf(i));
+                    this.datawatcher.watch(8, (byte) (PotionBrewer.b(this.effects.values()) ? 1 : 0));
+                    this.datawatcher.watch(7, i);
                     this.setInvisible(this.hasEffect(MobEffectList.INVISIBILITY.id));
                 }
             }
@@ -527,11 +527,11 @@ public abstract class EntityLiving extends Entity {
     }
 
     public void removeAllEffects() {
-    	final Iterator iterator = this.effects.keySet().iterator();
+    	final Iterator<Integer> iterator = this.effects.keySet().iterator();
 
         while (iterator.hasNext()) {
-            Integer integer = (Integer) iterator.next();
-            MobEffect mobeffect = (MobEffect) this.effects.get(integer);
+            Integer integer = iterator.next();
+            MobEffect mobeffect = this.effects.get(integer);
 
             if (!this.world.isStatic) {
                 iterator.remove();
@@ -540,7 +540,7 @@ public abstract class EntityLiving extends Entity {
         }
     }
 
-    public Collection getEffects() {
+    public Collection<MobEffect> getEffects() {
         return this.effects.values();
     }
 
@@ -551,11 +551,11 @@ public abstract class EntityLiving extends Entity {
 
     public boolean hasEffect(MobEffectList mobeffectlist) {
         // CraftBukkit - Add size check for efficiency
-        return !this.effects.isEmpty() && this.effects.containsKey(Integer.valueOf(mobeffectlist.id));
+        return !this.effects.isEmpty() && this.effects.containsKey((int)mobeffectlist.id);
     }
 
     public MobEffect getEffect(MobEffectList mobeffectlist) {
-        return (MobEffect) this.effects.get(Integer.valueOf(mobeffectlist.id));
+        return this.effects.get((int)mobeffectlist.id);
     }
 
     public void addEffect(MobEffect mobeffect) {
@@ -796,16 +796,18 @@ public abstract class EntityLiving extends Entity {
 
     public void a(ItemStack itemstack) {
         this.makeSound("random.break", 0.8F, 0.8F + this.world.random.nextFloat() * 0.4F);
-
+        
+        final float pitchRad = -this.pitch * (float)Math.PI / 180.0F; // Rinny - precompute
+        final float yawRad = -this.yaw * (float)Math.PI / 180.0F; // Rinny - precompute
         for (int i = 0; i < 5; ++i) {
         	final Vec3D vec3d = Vec3D.a(((double) this.random.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
         	
-            vec3d.a(-this.pitch * 3.1415927F / 180.0F);
-            vec3d.b(-this.yaw * 3.1415927F / 180.0F);
+            vec3d.a(pitchRad);
+            vec3d.b(yawRad);
             Vec3D vec3d1 = Vec3D.a(((double) this.random.nextFloat() - 0.5D) * 0.3D, (double) (-this.random.nextFloat()) * 0.6D - 0.3D, 0.6D);
 
-            vec3d1.a(-this.pitch * 3.1415927F / 180.0F);
-            vec3d1.b(-this.yaw * 3.1415927F / 180.0F);
+            vec3d1.a(pitchRad);
+            vec3d1.b(yawRad);
             vec3d1 = vec3d1.add(this.locX, this.locY + (double) this.getHeadHeight(), this.locZ);
             this.world.addParticle("iconcrack_" + Item.getId(itemstack.getItem()), vec3d1.a, vec3d1.b, vec3d1.c, vec3d.a, vec3d.b + 0.05D, vec3d.c);
         }
@@ -1685,12 +1687,14 @@ public abstract class EntityLiving extends Entity {
         if (this.R() && list != null && !list.isEmpty()) { // Spigot: Add this.R() condition
             numCollisions -= world.spigotConfig.maxCollisionsPerEntity; // Spigot
             for (int i = 0; i < list.size(); ++i) {
-                if (numCollisions > world.spigotConfig.maxCollisionsPerEntity) { break; } // Spigot
+                if (numCollisions > world.spigotConfig.maxCollisionsPerEntity) { // Spigot
+                	break; 
+                } 
                 Entity entity = (Entity) list.get(i);
 
                 // TODO better check now?
                 // CraftBukkit start - Only handle mob (non-player) collisions every other tick
-                if (entity instanceof EntityLiving && !(this instanceof EntityPlayer) && this.ticksLived % 2 == 0) {
+                if ((this.ticksLived & 1) == 0 && entity instanceof EntityLiving && !(this instanceof EntityPlayer)) { // Rinny - use bitwise instead of modulus + change order
                     continue;
                 }
                 // CraftBukkit end
