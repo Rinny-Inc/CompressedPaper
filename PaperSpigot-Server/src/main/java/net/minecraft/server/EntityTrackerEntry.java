@@ -19,8 +19,6 @@ import net.minecraft.server.PacketPlayOutPlayerInfo.PlayerInfo;
 
 public class EntityTrackerEntry {
 	
-	// TODO: Try to do a better position tracking
-
     //private static final Logger p = LogManager.getLogger();
     public @NotNull Entity tracker;
     public int b;
@@ -54,9 +52,9 @@ public class EntityTrackerEntry {
         this.b = i;
         this.c = j;
         this.u = flag;
-        this.xLoc = (int) MathHelper.floor(entity.locX * 32.0D); 
-        this.yLoc = (int) MathHelper.floor(entity.locY * 32.0D);
-        this.zLoc = (int) MathHelper.floor(entity.locZ * 32.0D);
+        this.xLoc = (int) Math.round(entity.locX * 32.0D); // old => floor
+        this.yLoc = (int) Math.round(entity.locY * 32.0D); // old => floor
+        this.zLoc = (int) Math.round(entity.locZ * 32.0D); // old => floor
         this.yRot = MathHelper.d(entity.yaw * 256.0F / 360.0F);
         this.xRot = MathHelper.d(entity.pitch * 256.0F / 360.0F);
         this.i = MathHelper.d(entity.getHeadRotation() * 256.0F / 360.0F);
@@ -137,9 +135,9 @@ public class EntityTrackerEntry {
 
             if (this.tracker.vehicle == null) {
                 ++this.v;
-                i = (int) Math.floor(this.tracker.locX * 32.0D);
-                j = (int) Math.floor(this.tracker.locY * 32.0D);
-                final int k = (int) Math.floor(this.tracker.locZ * 32.0D);
+                i = (int) Math.round(this.tracker.locX * 32.0D); // old => floor
+                j = (int) Math.round(this.tracker.locY * 32.0D); // old => floor
+                final int k = (int) Math.round(this.tracker.locZ * 32.0D); // old => floor
                 final int l = MathHelper.d(this.tracker.yaw * 256.0F / 360.0F);
                 final int i1 = MathHelper.d(this.tracker.pitch * 256.0F / 360.0F);
                 final int j1 = i - this.xLoc;
@@ -149,7 +147,7 @@ public class EntityTrackerEntry {
                 //final boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.m % 60 == 0; // Rinny - moved down
                 //final boolean flag1 = Math.abs(l - this.yRot) >= 4 || Math.abs(i1 - this.xRot) >= 4; // Rinny - moved down
 
-                if (this.m > 0 || this.tracker instanceof EntityArrow) { // PaperSpigot - Move up
+                if (this.m > 0) { // PaperSpigot - Move up // OLD => || this.tracker instanceof EntityArrow
                 	final boolean flag = Math.abs(j1) >= 4 || Math.abs(k1) >= 4 || Math.abs(l1) >= 4 || this.m % 60 == 0;
                     // CraftBukkit start - Code moved from below
                     if (flag) {
@@ -246,9 +244,9 @@ public class EntityTrackerEntry {
                     this.xRot = j;
                 }
 
-                this.xLoc = (int) Math.floor(this.tracker.locX * 32.0D);
-                this.yLoc = (int) Math.floor(this.tracker.locY * 32.0D);
-                this.zLoc = (int) Math.floor(this.tracker.locZ * 32.0D);
+                this.xLoc = (int) Math.round(this.tracker.locX * 32.0D); // old => floor
+                this.yLoc = (int) Math.round(this.tracker.locY * 32.0D); // old => floor
+                this.zLoc = (int) Math.round(this.tracker.locZ * 32.0D); // old => floor
                 this.b();
                 this.x = true;
             }
@@ -294,25 +292,25 @@ public class EntityTrackerEntry {
         final DataWatcher datawatcher = this.tracker.getDataWatcher();
 
         if (datawatcher.a()) {
-        	if (this.tracker instanceof EntityPlayer) {
-        		PacketPlayOutEntityMetadata broadcast = new PacketPlayOutEntityMetadata(this.tracker, false);
+        	if (this.tracker instanceof EntityPlayer player) {
+        		PacketPlayOutEntityMetadata broadcast = new PacketPlayOutEntityMetadata(player, false);
         		broadcast.obfuscateHealth();
         		broadcast(broadcast);
-        		((EntityPlayer)this.tracker).playerConnection.sendPacket(new PacketPlayOutEntityMetadata(this.tracker, false));
+        		player.playerConnection.sendPacket(new PacketPlayOutEntityMetadata(player, false));
         	} else {
         		broadcast(new PacketPlayOutEntityMetadata(this.tracker, false));
         	} 
         	datawatcher.e();
         }
 
-        if (this.tracker instanceof EntityLiving) {
-        	final AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) this.tracker).getAttributeMap();
+        if (this.tracker instanceof EntityLiving living) {
+        	final AttributeMapServer attributemapserver = (AttributeMapServer) living.getAttributeMap();
         	final Set set = attributemapserver.getAttributes();
 
             if (!set.isEmpty()) {
                 // CraftBukkit start - Send scaled max health
-                if (this.tracker instanceof EntityPlayer) {
-                    ((EntityPlayer) this.tracker).getBukkitEntity().injectScaledMaxHealth(set, false);
+                if (this.tracker instanceof EntityPlayer player) {
+                    player.getBukkitEntity().injectScaledMaxHealth(set, false);
                 }
                 // CraftBukkit end
                 this.broadcastIncludingSelf(new PacketPlayOutUpdateAttributes(this.tracker.getId(), set));
@@ -334,8 +332,8 @@ public class EntityTrackerEntry {
 
     public void broadcastIncludingSelf(Packet packet) {
         this.broadcast(packet);
-        if (this.tracker instanceof EntityPlayer) {
-            ((EntityPlayer) this.tracker).playerConnection.sendPacket(packet);
+        if (this.tracker instanceof EntityPlayer player) {
+            player.playerConnection.sendPacket(packet);
         }
     }
 
@@ -431,8 +429,8 @@ public class EntityTrackerEntry {
                     }
                     // CraftBukkit end
 
-                    if (this.tracker instanceof EntityInsentient && ((EntityInsentient) this.tracker).getLeashHolder() != null) {
-                        entityplayer.playerConnection.sendPacket(new PacketPlayOutAttachEntity(1, this.tracker, ((EntityInsentient) this.tracker).getLeashHolder()));
+                    if (this.tracker instanceof EntityInsentient insentient && insentient.getLeashHolder() != null) {
+                        entityplayer.playerConnection.sendPacket(new PacketPlayOutAttachEntity(1, this.tracker, insentient.getLeashHolder()));
                     }
 
                     if (this.tracker instanceof EntityHuman entityhuman) { // Rinny
