@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import net.minecraft.util.com.google.common.collect.HashMultimap;
 import net.minecraft.util.com.google.common.collect.Multimap;
-import net.minecraft.util.com.google.common.collect.Sets;
 
 public class Item {
 
@@ -212,34 +211,34 @@ public class Item {
         REGISTRY.a(2265, "record_ward", (new ItemRecord("ward")).c("record").f("record_ward"));
         REGISTRY.a(2266, "record_11", (new ItemRecord("11")).c("record").f("record_11"));
         REGISTRY.a(2267, "record_wait", (new ItemRecord("wait")).c("record").f("record_wait"));
-        final Set hashset = Sets.newHashSet(new Block[] { Blocks.AIR, Blocks.BREWING_STAND, Blocks.BED, Blocks.NETHER_WART, Blocks.CAULDRON, Blocks.FLOWER_POT, Blocks.CROPS, Blocks.SUGAR_CANE_BLOCK, Blocks.CAKE_BLOCK, Blocks.SKULL, Blocks.PISTON_EXTENSION, Blocks.PISTON_MOVING, Blocks.GLOWING_REDSTONE_ORE, Blocks.DIODE_ON, Blocks.PUMPKIN_STEM, Blocks.SIGN_POST, Blocks.REDSTONE_COMPARATOR_ON, Blocks.TRIPWIRE, Blocks.REDSTONE_LAMP_ON, Blocks.MELON_STEM, Blocks.REDSTONE_TORCH_OFF, Blocks.REDSTONE_COMPARATOR_OFF, Blocks.REDSTONE_WIRE, Blocks.WALL_SIGN, Blocks.DIODE_OFF, Blocks.IRON_DOOR_BLOCK, Blocks.WOODEN_DOOR});
+        final Set<Block> hashset = Set.of(Blocks.AIR, Blocks.BREWING_STAND, Blocks.BED, Blocks.NETHER_WART, Blocks.CAULDRON, Blocks.FLOWER_POT, Blocks.CROPS, Blocks.SUGAR_CANE_BLOCK, Blocks.CAKE_BLOCK, Blocks.SKULL, Blocks.PISTON_EXTENSION, Blocks.PISTON_MOVING, Blocks.GLOWING_REDSTONE_ORE, Blocks.DIODE_ON, Blocks.PUMPKIN_STEM, Blocks.SIGN_POST, Blocks.REDSTONE_COMPARATOR_ON, Blocks.TRIPWIRE, Blocks.REDSTONE_LAMP_ON, Blocks.MELON_STEM, Blocks.REDSTONE_TORCH_OFF, Blocks.REDSTONE_COMPARATOR_OFF, Blocks.REDSTONE_WIRE, Blocks.WALL_SIGN, Blocks.DIODE_OFF, Blocks.IRON_DOOR_BLOCK, Blocks.WOODEN_DOOR);
         final Iterator iterator = Block.REGISTRY.keySet().iterator();
 
         while (iterator.hasNext()) {
         	final String s = (String) iterator.next();
         	final Block block = (Block) Block.REGISTRY.get(s);
-        	Object object;
+        	Item object;
 
             if (block == Blocks.WOOL) {
                 object = (new ItemCloth(Blocks.WOOL)).b("cloth");
             } else if (block == Blocks.STAINED_HARDENED_CLAY) {
-                object = (new ItemCloth(Blocks.STAINED_HARDENED_CLAY)).b("clayHardenedStained");
+                object = (new ItemCloth(block)).b("clayHardenedStained");
             } else if (block == Blocks.STAINED_GLASS) {
-                object = (new ItemCloth(Blocks.STAINED_GLASS)).b("stainedGlass");
+                object = (new ItemCloth(block)).b("stainedGlass");
             } else if (block == Blocks.STAINED_GLASS_PANE) {
-                object = (new ItemCloth(Blocks.STAINED_GLASS_PANE)).b("stainedGlassPane");
+                object = (new ItemCloth(block)).b("stainedGlassPane");
             } else if (block == Blocks.WOOL_CARPET) {
-                object = (new ItemCloth(Blocks.WOOL_CARPET)).b("woolCarpet");
+                object = (new ItemCloth(block)).b("woolCarpet");
             } else if (block == Blocks.DIRT) {
-                object = (new ItemMultiTexture(Blocks.DIRT, Blocks.DIRT, BlockDirt.a)).b("dirt");
+                object = (new ItemMultiTexture(block, block, BlockDirt.a)).b("dirt");
             } else if (block == Blocks.SAND) {
-                object = (new ItemMultiTexture(Blocks.SAND, Blocks.SAND, BlockSand.a)).b("sand");
+                object = (new ItemMultiTexture(block, block, BlockSand.a)).b("sand");
             } else if (block == Blocks.LOG) {
-                object = (new ItemMultiTexture(Blocks.LOG, Blocks.LOG, BlockLog1.M)).b("log");
+                object = (new ItemMultiTexture(block, block, BlockLog1.M)).b("log");
             } else if (block == Blocks.LOG2) {
-                object = (new ItemMultiTexture(Blocks.LOG2, Blocks.LOG2, BlockLog2.M)).b("log");
+                object = (new ItemMultiTexture(block, block, BlockLog2.M)).b("log");
             } else if (block == Blocks.WOOD) {
-                object = (new ItemMultiTexture(Blocks.WOOD, Blocks.WOOD, BlockWood.a)).b("wood");
+                object = (new ItemMultiTexture(block, block, BlockWood.a)).b("wood");
             } else if (block == Blocks.MONSTER_EGGS) {
                 object = (new ItemMultiTexture(Blocks.MONSTER_EGGS, Blocks.MONSTER_EGGS, BlockMonsterEggs.a)).b("monsterStoneEgg");
             } else if (block == Blocks.SMOOTH_BRICK) {
@@ -248,20 +247,16 @@ public class Item {
                 object = (new ItemMultiTexture(Blocks.SANDSTONE, Blocks.SANDSTONE, BlockSandStone.a)).b("sandStone");
             } else if (block == Blocks.QUARTZ_BLOCK) {
                 object = (new ItemMultiTexture(Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_BLOCK, BlockQuartz.a)).b("quartzBlock");
-            } else if (block == Blocks.STEP) {
-                object = (new ItemStep(Blocks.STEP, Blocks.STEP, Blocks.DOUBLE_STEP, false)).b("stoneSlab");
-            } else if (block == Blocks.DOUBLE_STEP) {
-                object = (new ItemStep(Blocks.DOUBLE_STEP, Blocks.STEP, Blocks.DOUBLE_STEP, true)).b("stoneSlab");
-            } else if (block == Blocks.WOOD_STEP) {
-                object = (new ItemStep(Blocks.WOOD_STEP, Blocks.WOOD_STEP, Blocks.WOOD_DOUBLE_STEP, false)).b("woodSlab");
-            } else if (block == Blocks.WOOD_DOUBLE_STEP) {
-                object = (new ItemStep(Blocks.WOOD_DOUBLE_STEP, Blocks.WOOD_STEP, Blocks.WOOD_DOUBLE_STEP, true)).b("woodSlab");
+            } else if (block == Blocks.STEP || block == Blocks.DOUBLE_STEP) {
+            	final boolean isDouble = block == Blocks.DOUBLE_STEP;
+                object = new ItemStep(block, Blocks.STEP, Blocks.DOUBLE_STEP, isDouble).b("stoneSlab");
+            } else if (block == Blocks.WOOD_STEP || block == Blocks.WOOD_DOUBLE_STEP) {
+            	final boolean isDouble = block == Blocks.WOOD_DOUBLE_STEP;
+                object = (new ItemStep(block, Blocks.WOOD_STEP, Blocks.WOOD_DOUBLE_STEP, isDouble)).b("woodSlab");
             } else if (block == Blocks.SAPLING) {
                 object = (new ItemMultiTexture(Blocks.SAPLING, Blocks.SAPLING, BlockSapling.a)).b("sapling");
-            } else if (block == Blocks.LEAVES) {
-                object = (new ItemLeaves(Blocks.LEAVES)).b("leaves");
-            } else if (block == Blocks.LEAVES2) {
-                object = (new ItemLeaves(Blocks.LEAVES2)).b("leaves");
+            } else if (block == Blocks.LEAVES || block == Blocks.LEAVES2) {
+                object = new ItemLeaves((BlockLeaves) block).b("leaves");
             } else if (block == Blocks.VINE) {
                 object = new ItemWithAuxData(Blocks.VINE, false);
             } else if (block == Blocks.LONG_GRASS) {
@@ -271,9 +266,9 @@ public class Item {
             } else if (block == Blocks.RED_ROSE) {
                 object = (new ItemMultiTexture(Blocks.RED_ROSE, Blocks.RED_ROSE, BlockFlowers.a)).b("rose");
             } else if (block == Blocks.SNOW) {
-                object = new ItemSnow(Blocks.SNOW, Blocks.SNOW);
+                object = new ItemSnow(block, block);
             } else if (block == Blocks.WATER_LILY) {
-                object = new ItemWaterLily(Blocks.WATER_LILY);
+                object = new ItemWaterLily(block);
             } else if (block == Blocks.PISTON) {
                 object = new ItemPiston(Blocks.PISTON);
             } else if (block == Blocks.PISTON_STICKY) {
