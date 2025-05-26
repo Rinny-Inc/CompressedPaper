@@ -204,7 +204,15 @@ public abstract class BiomeBase {
     }
 
     public List getMobs(EnumCreatureType enumcreaturetype) {
-        return enumcreaturetype == EnumCreatureType.MONSTER ? this.as : (enumcreaturetype == EnumCreatureType.CREATURE ? this.at : (enumcreaturetype == EnumCreatureType.WATER_CREATURE ? this.au : (enumcreaturetype == EnumCreatureType.AMBIENT ? this.av : null)));
+    	// Rinny
+    	return switch (enumcreaturetype) {
+        	case MONSTER -> this.as;
+        	case CREATURE -> this.at;
+        	case WATER_CREATURE -> this.au;
+        	case AMBIENT -> this.av;
+        	default -> null;
+    	};
+    	// Rinny
     }
 
     public boolean d() {
@@ -250,7 +258,7 @@ public abstract class BiomeBase {
     }
 
     public final void b(World world, Random random, Block[] ablock, byte[] abyte, int i, int j, double d0) {
-        boolean flag = true;
+        //boolean flag = true;
         Block block = this.ai;
         byte b0 = (byte) (this.aj & 255);
         Block block1 = this.ak;
@@ -317,7 +325,7 @@ public abstract class BiomeBase {
         return new BiomeBaseSub(this.id + 128, this);
     }
 
-    public Class l() {
+    public Class<? extends BiomeBase> l() {
         return this.getClass();
     }
 
