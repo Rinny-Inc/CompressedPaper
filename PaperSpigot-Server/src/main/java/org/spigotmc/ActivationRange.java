@@ -289,7 +289,7 @@ public class ActivationRange
                 isActive = true;
             }
             // Add a little performance juice to active entities. Skip 1/4 if not immune.
-        } else if ( !entity.defaultActivationState && entity.ticksLived % 4 == 0 && !checkEntityImmunities( entity ) )
+        } else if ( !entity.defaultActivationState && (entity.ticksLived & 3) == 0 && !checkEntityImmunities( entity ) ) // Rinny - use bitwise
         {
             isActive = false;
         }

@@ -11,7 +11,7 @@ public class TileEntityEnderChest extends TileEntity {
 
     public void h() {
         super.h();
-        if (++this.k % 4 == 0) { // PaperSpigot Reduced (20 * 4) -> 4 interval due to reduced tick rate from Improved Tick Handling
+        if ((++this.k & 3) == 0) { // PaperSpigot Reduced (20 * 4) -> 4 interval due to reduced tick rate from Improved Tick Handling // Rinny - use bitwise
             this.world.playBlockAction(this.x, this.y, this.z, Blocks.ENDER_CHEST, 1, this.j);
         }
 
