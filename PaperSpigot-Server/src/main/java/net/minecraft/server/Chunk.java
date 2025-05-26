@@ -46,7 +46,7 @@ public class Chunk {
     public long lightUpdateTime;
     // PaperSpigot end
 
-    private int emptySectionBits;
+    //private int emptySectionBits;
     public HashSet<EntityPlayer> playersInChunk = new HashSet<EntityPlayer>();
 
     // CraftBukkit start - Neighbor loaded cache for chunk lighting and entity ticking
@@ -624,12 +624,17 @@ public class Chunk {
         }
 
         this.n = true;
-        if (enumskyblock == EnumSkyBlock.SKY) {
-            if (!this.world.worldProvider.g) {
-                chunksection.setSkyLight(i, j & 15, k, l);
-            }
-        } else if (enumskyblock == EnumSkyBlock.BLOCK) {
-            chunksection.setEmittedLight(i, j & 15, k, l);
+        switch (enumskyblock) { // Rinny
+        	case SKY: {
+        		if (!this.world.worldProvider.g) {
+                    chunksection.setSkyLight(i, j & 15, k, l);
+                }
+        		break;
+        	}
+        	case BLOCK: {
+        		chunksection.setEmittedLight(i, j & 15, k, l);
+        		break;
+        	}
         }
     }
 
@@ -829,13 +834,13 @@ public class Chunk {
         this.world.a(this.tileEntities.values());
 
         for (int i = 0; i < this.entitySlices.length; ++i) {
-        	final Iterator iterator = this.entitySlices[i].iterator();
+        	final Iterator<Entity> iterator = this.entitySlices[i].iterator();
 
             while (iterator.hasNext()) {
-            	final Entity entity = (Entity) iterator.next();
+            	final Entity entity = iterator.next();
 
-                if (entity instanceof EntityPlayer && !(entity instanceof EntityNPC)) {
-                    this.playersInChunk.add((EntityPlayer)entity);
+                if (entity instanceof EntityPlayer ep && !(entity instanceof EntityNPC)) {
+                    this.playersInChunk.add(ep);
                 }
                 entity.X();
             }
@@ -846,10 +851,10 @@ public class Chunk {
 
     public void removeEntities() {
         this.d = false;
-        final Iterator iterator = this.tileEntities.values().iterator();
+        final Iterator<TileEntity> iterator = this.tileEntities.values().iterator();
 
         while (iterator.hasNext()) {
-        	final TileEntity tileentity = (TileEntity) iterator.next();
+        	final TileEntity tileentity = iterator.next();
             // Spigot Start
             if ( tileentity instanceof IInventory inv)
             {
@@ -915,7 +920,7 @@ public class Chunk {
         this.n = true;
     }
 
-    public void a(Entity entity, AxisAlignedBB axisalignedbb, List list, IEntitySelector ientityselector) {
+    public void a(Entity entity, AxisAlignedBB axisalignedbb, List<Entity> list, IEntitySelector ientityselector) {
         int i = MathHelper.floor((axisalignedbb.b - 2.0D) / 16.0D);
         int j = MathHelper.floor((axisalignedbb.e + 2.0D) / 16.0D);
 
@@ -923,10 +928,10 @@ public class Chunk {
         j = MathHelper.a(j, 0, this.entitySlices.length - 1);
 
         for (int k = i; k <= j; ++k) {
-        	final List list1 = this.entitySlices[k];
+        	final List<Entity> list1 = this.entitySlices[k];
 
             for (int l = 0; l < list1.size(); ++l) {
-                Entity entity1 = (Entity) list1.get(l);
+                Entity entity1 = list1.get(l);
 
                 if (entity1 != entity && entity1.boundingBox.b(axisalignedbb) && (ientityselector == null || ientityselector.a(entity1))) {
                     list.add(entity1);
@@ -945,7 +950,7 @@ public class Chunk {
         }
     }
 
-    public void a(Class oclass, AxisAlignedBB axisalignedbb, List list, IEntitySelector ientityselector) {
+    public void a(Class<? extends Entity> oclass, AxisAlignedBB axisalignedbb, List<Entity> list, IEntitySelector ientityselector) {
         int i = MathHelper.floor((axisalignedbb.b - 2.0D) / 16.0D);
         int j = MathHelper.floor((axisalignedbb.e + 2.0D) / 16.0D);
 
@@ -953,7 +958,7 @@ public class Chunk {
         j = MathHelper.a(j, 0, this.entitySlices.length - 1);
 
         for (int k = i; k <= j; ++k) {
-        	final List list1 = this.entitySlices[k];
+        	final List<Entity> list1 = this.entitySlices[k];
 
             for (int l = 0; l < list1.size(); ++l) {
             	final Entity entity = (Entity) list1.get(l);
