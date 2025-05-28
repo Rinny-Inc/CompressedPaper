@@ -286,6 +286,7 @@ public class EntityZombie extends EntityMonster {
 
             case 2:
                 this.a(Items.POTATO, 1);
+                break;
         }
     }
 

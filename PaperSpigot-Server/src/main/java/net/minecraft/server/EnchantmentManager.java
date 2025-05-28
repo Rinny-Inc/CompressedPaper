@@ -274,7 +274,7 @@ public class EnchantmentManager {
         return itemstack;
     }
 
-    public static List b(Random random, ItemStack itemstack, int i) {
+    public static List<EnchantmentInstance> b(Random random, ItemStack itemstack, int i) {
         Item item = itemstack.getItem();
         int j = item.c();
 
@@ -291,14 +291,14 @@ public class EnchantmentManager {
                 l = 1;
             }
 
-            List arraylist = null;
+            List<EnchantmentInstance> arraylist = null;
             Map map = b(l, itemstack);
 
             if (map != null && !map.isEmpty()) {
                 EnchantmentInstance enchantmentinstance = (EnchantmentInstance) WeightedRandom.a(random, map.values());
 
                 if (enchantmentinstance != null) {
-                    arraylist = new ArrayList();
+                    arraylist = new ArrayList<>();
                     arraylist.add(enchantmentinstance);
 
                     for (int i1 = l; random.nextInt(50) <= i1; i1 >>= 1) {

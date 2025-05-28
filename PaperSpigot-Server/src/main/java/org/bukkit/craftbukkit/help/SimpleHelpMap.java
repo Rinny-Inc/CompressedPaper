@@ -20,14 +20,14 @@ public class SimpleHelpMap implements HelpMap {
 
     private HelpTopic defaultTopic;
     private final Map<String, HelpTopic> helpTopics;
-    private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
+    private final Map<Class<? extends Command>, HelpTopicFactory<Command>> topicFactoryMap;
     private final CraftServer server;
     private HelpYamlReader yaml;
 
     @SuppressWarnings("unchecked")
     public SimpleHelpMap(CraftServer server) {
         this.helpTopics = new TreeMap<String, HelpTopic>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
-        this.topicFactoryMap = new HashMap<Class, HelpTopicFactory<Command>>();
+        this.topicFactoryMap = new HashMap<Class<? extends Command>, HelpTopicFactory<Command>>();
         this.server = server;
         this.yaml = new HelpYamlReader(server);
 
@@ -112,7 +112,7 @@ public class SimpleHelpMap implements HelpMap {
             }
 
             // Register a topic
-            for (Class c : topicFactoryMap.keySet()) {
+            for (Class<? extends Command> c : topicFactoryMap.keySet()) {
                 if (c.isAssignableFrom(command.getClass())) {
                     HelpTopic t = topicFactoryMap.get(c).createTopic(command);
                     if (t != null) addTopic(t);
@@ -171,10 +171,9 @@ public class SimpleHelpMap implements HelpMap {
             if (pluginName != null) {
                 HelpTopic topic = getHelpTopic("/" + command.getLabel());
                 if (topic != null) {
-                    if (!pluginIndexes.containsKey(pluginName)) {
-                        pluginIndexes.put(pluginName, new TreeSet<HelpTopic>(HelpTopicComparator.helpTopicComparatorInstance())); //keep things in topic order
-                    }
-                    pluginIndexes.get(pluginName).add(topic);
+                	// Rinny
+                	pluginIndexes.computeIfAbsent(pluginName, k -> new TreeSet<>(HelpTopicComparator.helpTopicComparatorInstance())).add(topic);
+                    // Rinny
                 }
             }
         }
@@ -187,8 +186,8 @@ public class SimpleHelpMap implements HelpMap {
         if (command instanceof BukkitCommand || command instanceof VanillaCommand) {
             return "Bukkit";
         }
-        if (command instanceof PluginIdentifiableCommand) {
-            return ((PluginIdentifiableCommand)command).getPlugin().getName();
+        if (command instanceof PluginIdentifiableCommand pic) { // Rinny
+            return pic.getPlugin().getName();
         }
         return null;
     }
@@ -197,7 +196,7 @@ public class SimpleHelpMap implements HelpMap {
         if ((command instanceof BukkitCommand || command instanceof VanillaCommand) && ignoredPlugins.contains("Bukkit")) {
             return true;
         }
-        if (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand)command).getPlugin().getName())) {
+        if (command instanceof PluginIdentifiableCommand pic && ignoredPlugins.contains(pic.getPlugin().getName())) {
             return true;
         }
         return false;

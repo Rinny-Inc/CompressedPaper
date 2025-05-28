@@ -201,8 +201,8 @@ public abstract class Container {
                         playerinventory.setCarried(oldCursor);
                     }
 
-                    if (needsUpdate && entityhuman instanceof EntityPlayer) {
-                        ((EntityPlayer) entityhuman).updateInventory(this);
+                    if (needsUpdate && entityhuman instanceof EntityPlayer ep) {
+                        ep.updateInventory(this);
                     }
                     // CraftBukkit end
                 }
@@ -284,8 +284,8 @@ public abstract class Container {
                                 if (itemstack4.count == 0) {
                                     playerinventory.setCarried((ItemStack) null);
                                 // CraftBukkit start - Update client cursor if we didn't empty it
-                                } else if (entityhuman instanceof EntityPlayer) {
-                                    ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
+                                } else if (entityhuman instanceof EntityPlayer ep) {
+                                	ep.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
                                 }
                                 // CraftBukkit end
                             }
@@ -314,8 +314,8 @@ public abstract class Container {
                                     if (itemstack4.count == 0) {
                                         playerinventory.setCarried((ItemStack) null);
                                     // CraftBukkit start - Update client cursor if we didn't empty it
-                                    } else if (entityhuman instanceof EntityPlayer) {
-                                        ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
+                                    } else if (entityhuman instanceof EntityPlayer ep) {
+                                    	ep.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
                                     }
                                     // CraftBukkit end
 
@@ -338,8 +338,8 @@ public abstract class Container {
 
                                     slot2.a(entityhuman, playerinventory.getCarried());
                                 // CraftBukkit start - Update client cursor if we didn't empty it
-                                } else if (entityhuman instanceof EntityPlayer) {
-                                    ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
+                                } else if (entityhuman instanceof EntityPlayer ep) {
+                                	ep.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, entityhuman.inventory.getCarried()));
                                 }
                                 // CraftBukkit end
                             }
@@ -347,11 +347,11 @@ public abstract class Container {
 
                         slot2.f();
                         // CraftBukkit start - Make sure the client has the right slot contents
-                        if (entityhuman instanceof EntityPlayer && slot2.getMaxStackSize() != 64) {
-                            ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutSetSlot(this.windowId, slot2.rawSlotIndex, slot2.getItem()));
+                        if (entityhuman instanceof EntityPlayer ep && slot2.getMaxStackSize() != 64) {
+                        	ep.playerConnection.sendPacket(new PacketPlayOutSetSlot(this.windowId, slot2.rawSlotIndex, slot2.getItem()));
                             // Updating a crafting inventory makes the client reset the result slot, have to send it again
                             if (this.getBukkitView().getType() == InventoryType.WORKBENCH || this.getBukkitView().getType() == InventoryType.CRAFTING) {
-                                ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutSetSlot(this.windowId, 0, this.getSlot(0).getItem()));
+                            	ep.playerConnection.sendPacket(new PacketPlayOutSetSlot(this.windowId, 0, this.getSlot(0).getItem()));
                             }
                         }
                         // CraftBukkit end

@@ -87,20 +87,18 @@ public class MobEffectList {
             entityliving.damageEntity(DamageSource.WITHER, 1.0F);
         } else if (this.id == HUNGER.id && entityliving instanceof EntityHuman entityhuman) {
         	entityhuman.applyExhaustion(0.025F * (float) (i + 1));
-        } else if (this.id == SATURATION.id && entityliving instanceof EntityHuman entityhuman) { // Rinny
-            if (!entityliving.world.isStatic) {
-                // CraftBukkit start
-                int oldFoodLevel = entityhuman.getFoodData().foodLevel;
+        } else if (this.id == SATURATION.id && entityliving instanceof EntityHuman entityhuman && !entityliving.world.isStatic) { // Rinny
+            // CraftBukkit start
+            int oldFoodLevel = entityhuman.getFoodData().foodLevel;
 
-                org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, i + 1 + oldFoodLevel);
+            org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityhuman, i + 1 + oldFoodLevel);
 
-                if (!event.isCancelled()) {
-                    entityhuman.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 1.0F);
-                }
-
-                ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutUpdateHealth(((EntityPlayer) entityhuman).getBukkitEntity().getScaledHealth(), entityhuman.getFoodData().foodLevel, entityhuman.getFoodData().saturationLevel));
-                // CraftBukkit end
+            if (!event.isCancelled()) {
+                entityhuman.getFoodData().eat(event.getFoodLevel() - oldFoodLevel, 1.0F);
             }
+
+            ((EntityPlayer) entityhuman).playerConnection.sendPacket(new PacketPlayOutUpdateHealth(((EntityPlayer) entityhuman).getBukkitEntity().getScaledHealth(), entityhuman.getFoodData().foodLevel, entityhuman.getFoodData().saturationLevel));
+            // CraftBukkit end
         } else if ((this.id != HEAL.id || entityliving.aR()) && (this.id != HARM.id || !entityliving.aR())) {
             if (this.id == HARM.id && !entityliving.aR() || this.id == HEAL.id && entityliving.aR()) {
                 entityliving.damageEntity(DamageSource.MAGIC, (float) (6 << i));

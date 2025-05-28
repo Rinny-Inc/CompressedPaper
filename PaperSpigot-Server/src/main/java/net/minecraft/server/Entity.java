@@ -1862,8 +1862,8 @@ public abstract class Entity {
     }
 
     public void teleportTo(Location exit, boolean portal) {
-        if (true) {
-        	final WorldServer worldserver = ((CraftWorld) this.getBukkitEntity().getLocation().getWorld()).getHandle();
+        //if (true) { // Rinny - remove if true
+        	//final WorldServer worldserver = ((CraftWorld) this.getBukkitEntity().getLocation().getWorld()).getHandle();
         	final WorldServer worldserver1 = ((CraftWorld) exit.getWorld()).getHandle();
         	final int i = worldserver1.dimension;
             // CraftBukkit end
@@ -1909,7 +1909,7 @@ public abstract class Entity {
             }
 
             this.dead = true;
-        }
+        //}
     }
 
     public float a(Explosion explosion, World world, int i, int j, int k, Block block) {
