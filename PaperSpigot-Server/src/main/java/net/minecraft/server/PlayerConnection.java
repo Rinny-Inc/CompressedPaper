@@ -76,9 +76,19 @@ public class PlayerConnection implements PacketPlayInListener {
 	private double y;
 	private double z;
 	private double q;
-	public boolean checkMovement; // CraftBukkit - private -> public
-	private boolean processedDisconnect; // CraftBukkit - added
-	private boolean disconnecting; // KigPaper - added
+	private static final byte FLAG_CHECK_MOVEMENT       = 1;
+	private static final byte FLAG_PROCESSED_DISCONNECT = 1 << 1;
+	private static final byte FLAG_DISCONNECTING        = 1 << 2;
+	private static final byte FLAG_JUST_TELEPORTED      = 1 << 3;
+	private static final byte FLAG_HAS_MOVED            = 1 << 4;
+
+	private byte flags;
+
+	private boolean getFlag(byte mask)       { return (flags & mask) != 0; }
+	private void    setFlag(byte mask, boolean v) {
+    	if (v) flags |=  mask;
+    	else   flags &= ~mask;
+	}
 
 	public PlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer) {
 		this.minecraftServer = minecraftserver;
@@ -86,7 +96,7 @@ public class PlayerConnection implements PacketPlayInListener {
 		networkmanager.a((PacketListener) this);
 		this.player = entityplayer;
 		this.n = new IntHashMap();
-		this.checkMovement = true;
+		this.flags = FLAG_CHECK_MOVEMENT;
 		this.lastDropTick = MinecraftServer.currentTick;
 		this.dropCount = 0;
 		entityplayer.playerConnection = this;
@@ -116,8 +126,6 @@ public class PlayerConnection implements PacketPlayInListener {
 	private double lastPosZ = Double.MAX_VALUE;
 	private float lastPitch = Float.MAX_VALUE;
 	private float lastYaw = Float.MAX_VALUE;
-	private boolean justTeleported = false;
-	private boolean hasMoved; // Spigot
 
 	// For the PacketPlayOutBlockPlace hack :(
 	Long lastPacket;
@@ -180,7 +188,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
 	public void disconnect(String s) {
 		// KigPaper - if already disconnecting, do nothing
-		if (disconnecting)
+		if (getFlag(FLAG_DISCONNECTING))
 			return;
 		// CraftBukkit start - fire PlayerKickEvent
 		final String leaveMessage = EnumChatFormat.YELLOW + this.player.getName() + " left the game.";
@@ -197,7 +205,7 @@ public class PlayerConnection implements PacketPlayInListener {
 		}
 		// KigPaper - mark the player as disconnecting, so all other disconnect requests
 		// are ignored.
-		disconnecting = true;
+		this.setFlag(FLAG_DISCONNECTING, true);
 		// Send the possibly modified leave message
 		s = event.getReason();
 		// CraftBukkit end
@@ -229,24 +237,24 @@ public class PlayerConnection implements PacketPlayInListener {
 		if (!this.player.viewingCredits && !this.player.dead) {
 			double packetY;
 
-			if (!this.checkMovement) {
+			if (!this.getFlag(FLAG_CHECK_MOVEMENT)) {
 				packetY = packetplayinflying.d() - this.z;
 				if (packetplayinflying.c() == this.y && packetY * packetY < 0.01D && packetplayinflying.e() == this.q) {
-					this.checkMovement = true;
+					this.setFlag(FLAG_CHECK_MOVEMENT, true);
 				}
 			}
 
 			// CraftBukkit start - fire PlayerMoveEvent
 			final Player player = this.getPlayer();
 			// Spigot Start
-			if (!hasMoved) {
+			if (!this.getFlag(FLAG_HAS_MOVED)) {
 				Location curPos = player.getLocation();
 				lastPosX = curPos.getX();
 				lastPosY = curPos.getY();
 				lastPosZ = curPos.getZ();
 				lastYaw = curPos.getYaw();
 				lastPitch = curPos.getPitch();
-				hasMoved = true;
+				this.setFlag(FLAG_HAS_MOVED, true);
 			}
 			// Spigot End
 			final Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get
@@ -275,7 +283,7 @@ public class PlayerConnection implements PacketPlayInListener {
 				to.setPitch(packetplayinflying.pitch);
 			}
 
-			if (this.checkMovement) {
+			if (this.getFlag(FLAG_CHECK_MOVEMENT)) {
 				// Prevent 40 event-calls for less than a single pixel of movement >.>
 				final double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
 				final float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
@@ -334,8 +342,8 @@ public class PlayerConnection implements PacketPlayInListener {
 					 * the event. This can happen due to a plugin teleporting the player instead of
 					 * using .setTo()
 					 */
-					if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
-						this.justTeleported = false;
+					if (!from.equals(this.getPlayer().getLocation()) && this.getFlag(FLAG_JUST_TELEPORTED))) {
+						this.setFlag(FLAG_JUST_TELEPORTED, false);
 						return;
 					}
 					// }
@@ -370,7 +378,7 @@ public class PlayerConnection implements PacketPlayInListener {
 					}
 
 					this.minecraftServer.getPlayerList().d(this.player);
-					if (this.checkMovement) {
+					if (this.getFlag(FLAG_CHECK_MOVEMENT)) {
 						this.y = this.player.locX;
 						this.z = this.player.locY;
 						this.q = this.player.locZ;
@@ -432,7 +440,7 @@ public class PlayerConnection implements PacketPlayInListener {
 				}
 				this.player.V = 0.0F;
 				this.player.setLocation(this.y, this.z, this.q, f2, f3);
-				if (!this.checkMovement) {
+				if (!this.getFlag(FLAG_CHECK_MOVEMENT)) {
 					return;
 				}
 
@@ -586,10 +594,10 @@ public class PlayerConnection implements PacketPlayInListener {
 		this.lastPosZ = d2;
 		this.lastYaw = f;
 		this.lastPitch = f1;
-		this.justTeleported = true;
+		this.setFlag(FLAG_JUST_TELEPORTED, true);
 		// CraftBukkit end
 
-		this.checkMovement = false;
+		this.setFlag(FLAG_CHECK_MOVEMENT, false);
 		this.y = d0;
 		this.z = d1;
 		this.q = d2;
@@ -886,10 +894,10 @@ public class PlayerConnection implements PacketPlayInListener {
 
 	public void a(IChatBaseComponent ichatbasecomponent) {
 		// CraftBukkit start - Rarely it would send a disconnect line twice
-		if (this.processedDisconnect) {
+		if (this.getFlag(FLAG_PROCESSED_DISCONNECT)) {
 			return;
 		}
-		this.processedDisconnect = true;
+		this.setFlag(FLAG_PROCESSED_DISCONNECT, true);
 		// CraftBukkit end
 		logger.info(this.player.getName() + " lost connection: " + ichatbasecomponent.c()); // CraftBukkit - Don't
 																							// toString the component
@@ -916,7 +924,7 @@ public class PlayerConnection implements PacketPlayInListener {
 	}
 
 	public void sendPacket(Packet packet) {
-		if (packet == null || this.processedDisconnect) {
+		if (packet == null || this.getFlag(FLAG_PROCESSED_DISCONNECT)) {
 			return;
 		}
 		if (packet instanceof PacketPlayOutEntityVelocity && player.vehicle != null) { // Rinny - don't send Velocity
@@ -2342,7 +2350,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
 	// CraftBukkit start - Add "isDisconnected" method
 	public boolean isDisconnected() {
-		return !this.player.joining && !this.networkManager.isConnected() || this.processedDisconnect;
+		return !this.player.joining && !this.networkManager.isConnected() || this.getFlag(FLAG_PROCESSED_DISCONNECT);
 	}
 	// CraftBukkit end
 }

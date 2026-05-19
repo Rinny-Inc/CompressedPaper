@@ -4,8 +4,22 @@ public class PacketPlayInSteerVehicle extends Packet {
 
     private float a;
     private float b;
-    private boolean c;
-    private boolean d;
+    private byte cd = 0;
+
+    private void setC(boolean value) {
+        if (value) this.cd |= 0x1;
+        else this.cd &= ~0x1;
+    }
+    private boolean getC() {
+        return (this.cd & 0x1) != 0;
+    }
+    private void setD(boolean value) {
+        if (value) this.cd |= 0x2;
+        else this.cd &= ~0x2;
+    }
+    private boolean getD() {
+        return (this.cd & 0x2) != 0;
+    }
 
     public PacketPlayInSteerVehicle() {}
 
@@ -15,12 +29,12 @@ public class PacketPlayInSteerVehicle extends Packet {
         // Spigot start - protocol patch
         if ( packetdataserializer.version < 16 )
         {
-            this.c = packetdataserializer.readBoolean();
-            this.d = packetdataserializer.readBoolean();
+            setC(packetdataserializer.readBoolean());
+            setD(packetdataserializer.readBoolean());
         } else {
-            int flags = packetdataserializer.readUnsignedByte();
-            c = (flags & 0x1) != 0;
-            d = (flags & 0x2) != 0;
+            byte flags = packetdataserializer.readUnsignedByte();
+            setC((flags & 0x1) != 0);
+            setD((flags & 0x2) != 0);
         }
         // Spigot end
     }
@@ -28,8 +42,8 @@ public class PacketPlayInSteerVehicle extends Packet {
     public void b(PacketDataSerializer packetdataserializer) {
         packetdataserializer.writeFloat(this.a);
         packetdataserializer.writeFloat(this.b);
-        packetdataserializer.writeBoolean(this.c);
-        packetdataserializer.writeBoolean(this.d);
+        packetdataserializer.writeBoolean(getC());
+        packetdataserializer.writeBoolean(getD());
     }
 
     public void a(PacketPlayInListener packetplayinlistener) {
@@ -45,11 +59,11 @@ public class PacketPlayInSteerVehicle extends Packet {
     }
 
     public boolean e() {
-        return this.c;
+        return getC();
     }
 
     public boolean f() {
-        return this.d;
+        return getD();
     }
 
     public void handle(PacketListener packetlistener) {
