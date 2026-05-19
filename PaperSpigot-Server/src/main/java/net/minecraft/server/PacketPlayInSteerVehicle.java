@@ -32,7 +32,7 @@ public class PacketPlayInSteerVehicle extends Packet {
             setC(packetdataserializer.readBoolean());
             setD(packetdataserializer.readBoolean());
         } else {
-            byte flags = packetdataserializer.readUnsignedByte();
+            int flags = packetdataserializer.readUnsignedByte();
             setC((flags & 0x1) != 0);
             setD((flags & 0x2) != 0);
         }
