@@ -76,18 +76,23 @@ public class PlayerConnection implements PacketPlayInListener {
 	private double y;
 	private double z;
 	private double q;
-	private static final byte FLAG_CHECK_MOVEMENT       = 1;
+	private static final byte FLAG_CHECK_MOVEMENT = 1;
 	private static final byte FLAG_PROCESSED_DISCONNECT = 1 << 1;
-	private static final byte FLAG_DISCONNECTING        = 1 << 2;
-	private static final byte FLAG_JUST_TELEPORTED      = 1 << 3;
-	private static final byte FLAG_HAS_MOVED            = 1 << 4;
+	private static final byte FLAG_DISCONNECTING = 1 << 2;
+	private static final byte FLAG_JUST_TELEPORTED = 1 << 3;
+	private static final byte FLAG_HAS_MOVED = 1 << 4;
 
 	private byte flags;
 
-	private boolean getFlag(byte mask)       { return (flags & mask) != 0; }
-	private void    setFlag(byte mask, boolean v) {
-    	if (v) flags |=  mask;
-    	else   flags &= ~mask;
+	private boolean getFlag(byte mask) {
+		return (flags & mask) != 0;
+	}
+
+	private void setFlag(byte mask, boolean v) {
+		if (v)
+			flags |= mask;
+		else
+			flags &= ~mask;
 	}
 
 	public PlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer) {
@@ -147,14 +152,14 @@ public class PlayerConnection implements PacketPlayInListener {
 	public void a() {
 		// this.g = false;
 		if (this.networkManager.getVersion() >= 107) {
-		      double x = this.player.locX;
-		      double y = this.player.locY;
-		      double z = this.player.locZ;
-		      boolean onGround = this.player.onGround;
-		      this.player.i();
-		      this.player.setLocation(x, y, z, this.player.yaw, this.player.pitch);
-		      this.player.onGround = onGround;
-		} 
+			double x = this.player.locX;
+			double y = this.player.locY;
+			double z = this.player.locZ;
+			boolean onGround = this.player.onGround;
+			this.player.i();
+			this.player.setLocation(x, y, z, this.player.yaw, this.player.pitch);
+			this.player.onGround = onGround;
+		}
 		++this.e;
 		if ((long) this.e - this.k > 40L) {
 			this.k = (long) this.e;
@@ -285,8 +290,10 @@ public class PlayerConnection implements PacketPlayInListener {
 
 			if (this.getFlag(FLAG_CHECK_MOVEMENT)) {
 				// Prevent 40 event-calls for less than a single pixel of movement >.>
-				final double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
-				final float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+				final double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2)
+						+ Math.pow(this.lastPosZ - to.getZ(), 2);
+				final float deltaAngle = Math.abs(this.lastYaw - to.getYaw())
+						+ Math.abs(this.lastPitch - to.getPitch());
 
 				if (deltaAngle > 7.5f) {
 					this.lastYaw = to.getYaw();
@@ -342,7 +349,7 @@ public class PlayerConnection implements PacketPlayInListener {
 					 * the event. This can happen due to a plugin teleporting the player instead of
 					 * using .setTo()
 					 */
-					if (!from.equals(this.getPlayer().getLocation()) && this.getFlag(FLAG_JUST_TELEPORTED))) {
+					if (!from.equals(this.getPlayer().getLocation()) && this.getFlag(FLAG_JUST_TELEPORTED)) {
 						this.setFlag(FLAG_JUST_TELEPORTED, false);
 						return;
 					}
@@ -369,7 +376,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
 					this.player.onGround = ground;
 					if (this.networkManager.getVersion() < 107) {
-			            this.player.i(); 
+						this.player.i();
 					}
 					this.player.V = 0.0F;
 					this.player.setLocation(d1, d2, d3, f, f1);
@@ -390,7 +397,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
 				if (this.player.isSleeping()) {
 					if (this.networkManager.getVersion() < 107) {
-			            this.player.i();
+						this.player.i();
 					}
 					this.player.setLocation(this.y, this.z, this.q, this.player.yaw, this.player.pitch);
 					worldserver.playerJoinedWorld(this.player);
@@ -690,37 +697,37 @@ public class PlayerConnection implements PacketPlayInListener {
 			}
 		}
 		switch (packetplayinblockdig.g()) {
-		case 0 -> {
-			if (!this.minecraftServer.a(worldserver, i, j, k, this.player)) {
-				this.player.playerInteractManager.dig(i, j, k, packetplayinblockdig.f());
-			} else {
-				// CraftBukkit start - fire PlayerInteractEvent
-				CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, i, j, k,
-						packetplayinblockdig.f(), this.player.inventory.getItemInHand());
-				this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
-				// Update any tile entity data for this block
-				final TileEntity tileentity = worldserver.getTileEntity(i, j, k);
-				if (tileentity != null) {
-					this.player.playerConnection.sendPacket(tileentity.getUpdatePacket());
+			case 0 -> {
+				if (!this.minecraftServer.a(worldserver, i, j, k, this.player)) {
+					this.player.playerInteractManager.dig(i, j, k, packetplayinblockdig.f());
+				} else {
+					// CraftBukkit start - fire PlayerInteractEvent
+					CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, i, j, k,
+							packetplayinblockdig.f(), this.player.inventory.getItemInHand());
+					this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
+					// Update any tile entity data for this block
+					final TileEntity tileentity = worldserver.getTileEntity(i, j, k);
+					if (tileentity != null) {
+						this.player.playerConnection.sendPacket(tileentity.getUpdatePacket());
+					}
+					// CraftBukkit end
 				}
-				// CraftBukkit end
+				return;
 			}
-			return;
-		}
-		case 2 -> {
-			this.player.playerInteractManager.a(i, j, k);
-			if (worldserver.getType(i, j, k).getMaterial() != Material.AIR) {
-				this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
+			case 2 -> {
+				this.player.playerInteractManager.a(i, j, k);
+				if (worldserver.getType(i, j, k).getMaterial() != Material.AIR) {
+					this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
+				}
+				return;
 			}
-			return;
-		}
-		case 1 -> {
-			this.player.playerInteractManager.c(i, j, k);
-			if (worldserver.getType(i, j, k).getMaterial() != Material.AIR) {
-				this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
+			case 1 -> {
+				this.player.playerInteractManager.c(i, j, k);
+				if (worldserver.getType(i, j, k).getMaterial() != Material.AIR) {
+					this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(i, j, k, worldserver));
+				}
+				return;
 			}
-			return;
-		}
 		}
 	}
 
@@ -732,7 +739,8 @@ public class PlayerConnection implements PacketPlayInListener {
 		boolean throttled = false;
 		// PaperSpigot - Allow disabling the player interaction limiter
 		final long timeStamp = packetplayinblockplace.timestamp;
-		if (org.github.paperspigot.PaperSpigotConfig.interactLimitEnabled && lastPlace != -1 && timeStamp - lastPlace < 30 && packets++ >= 4) {
+		if (org.github.paperspigot.PaperSpigotConfig.interactLimitEnabled && lastPlace != -1
+				&& timeStamp - lastPlace < 30 && packets++ >= 4) {
 			throttled = true;
 		} else if (timeStamp - lastPlace >= 30 || lastPlace == -1) {
 			lastPlace = timeStamp;
@@ -765,10 +773,11 @@ public class PlayerConnection implements PacketPlayInListener {
 				this.lastPacket = null;
 				return;
 			}
-			if (this.networkManager.getVersion() >= 107 && this.lastPacket != null && packetplayinblockplace.timestamp - this.lastPacket.longValue() < 100L) {
-		        this.lastPacket = null;
-		        return;
-			} 
+			if (this.networkManager.getVersion() >= 107 && this.lastPacket != null
+					&& packetplayinblockplace.timestamp - this.lastPacket.longValue() < 100L) {
+				this.lastPacket = null;
+				return;
+			}
 		} else {
 			this.lastMaterial = packetplayinblockplace.getItemStack() == null ? null
 					: packetplayinblockplace.getItemStack().getItem();
@@ -856,12 +865,12 @@ public class PlayerConnection implements PacketPlayInListener {
 		if (flag) {
 			this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(x, y, z, worldserver));
 			switch (face) {
-			case 0 -> --y;
-			case 1 -> ++y;
-			case 2 -> --z;
-			case 3 -> ++z;
-			case 4 -> --x;
-			case 5 -> ++x;
+				case 0 -> --y;
+				case 1 -> ++y;
+				case 2 -> --z;
+				case 3 -> ++z;
+				case 4 -> --x;
+				case 5 -> ++x;
 			}
 			this.player.playerConnection.sendPacket(new PacketPlayOutBlockChange(x, y, z, worldserver));
 		}
@@ -952,21 +961,23 @@ public class PlayerConnection implements PacketPlayInListener {
 			}
 		}
 		if (this.networkManager.getVersion() >= 107) {
-	        if (packet instanceof PacketPlayOutWindowItems) {
-	          PacketPlayOutWindowItems items = (PacketPlayOutWindowItems)packet;
-	          if (this.player.activeContainer instanceof ContainerBrewingStand && this.player.activeContainer.windowId == items.a) {
-	            ItemStack[] old = items.b;
-	            items.b = new ItemStack[old.length + 1];
-	            System.arraycopy(old, 0, items.b, 0, 4);
-	            System.arraycopy(old, 4, items.b, 5, old.length - 4);
-	            items.b[4] = new ItemStack(Items.BLAZE_POWDER);
-	          } 
-	        } else if (packet instanceof PacketPlayOutSetSlot) {
-	          PacketPlayOutSetSlot items = (PacketPlayOutSetSlot)packet;
-	          if (this.player.activeContainer instanceof ContainerBrewingStand && this.player.activeContainer.windowId == items.a && items.b >= 4)
-	            items.b++; 
-	        }  
-	    } 
+			if (packet instanceof PacketPlayOutWindowItems) {
+				PacketPlayOutWindowItems items = (PacketPlayOutWindowItems) packet;
+				if (this.player.activeContainer instanceof ContainerBrewingStand
+						&& this.player.activeContainer.windowId == items.a) {
+					ItemStack[] old = items.b;
+					items.b = new ItemStack[old.length + 1];
+					System.arraycopy(old, 0, items.b, 0, 4);
+					System.arraycopy(old, 4, items.b, 5, old.length - 4);
+					items.b[4] = new ItemStack(Items.BLAZE_POWDER);
+				}
+			} else if (packet instanceof PacketPlayOutSetSlot) {
+				PacketPlayOutSetSlot items = (PacketPlayOutSetSlot) packet;
+				if (this.player.activeContainer instanceof ContainerBrewingStand
+						&& this.player.activeContainer.windowId == items.a && items.b >= 4)
+					items.b++;
+			}
+		}
 		// Spigot end
 		if (packet instanceof PacketPlayOutChat packetplayoutchat) { // Rinny
 			final EnumChatVisibility enumchatvisibility = this.player.getChatFlags();
@@ -1259,7 +1270,7 @@ public class PlayerConnection implements PacketPlayInListener {
 				CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR,
 						this.player.inventory.getItemInHand());
 			}
-			
+
 			this.player.ba();
 		}
 	}
@@ -1271,29 +1282,29 @@ public class PlayerConnection implements PacketPlayInListener {
 
 		this.player.resetIdleTimer();
 		switch (packetplayinentityaction.d()) {
-		case 1, 2 -> {
-			PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(),
-					packetplayinentityaction.d() == 1);
-			this.server.getPluginManager().callEvent(event);
+			case 1, 2 -> {
+				PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(),
+						packetplayinentityaction.d() == 1);
+				this.server.getPluginManager().callEvent(event);
 
-			if (event.isCancelled()) {
-				return;
+				if (event.isCancelled()) {
+					return;
+				}
+				break;
 			}
-			break;
-		}
-		case 4, 5 -> {
-			PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this.getPlayer(),
-					packetplayinentityaction.d() == 4);
-			this.server.getPluginManager().callEvent(event);
+			case 4, 5 -> {
+				PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this.getPlayer(),
+						packetplayinentityaction.d() == 4);
+				this.server.getPluginManager().callEvent(event);
 
-			if (event.isCancelled()) {
-				return;
+				if (event.isCancelled()) {
+					return;
+				}
+				break;
 			}
-			break;
-		}
-		default -> {
-			break;
-		}
+			default -> {
+				break;
+			}
 		}
 		/*
 		 * if (packetplayinentityaction.d() == 1 || packetplayinentityaction.d() == 2) {
@@ -1313,27 +1324,27 @@ public class PlayerConnection implements PacketPlayInListener {
 		// CraftBukkit end
 
 		switch (packetplayinentityaction.d()) {
-		case 1 -> this.player.setSneaking(true);
-		case 2 -> this.player.setSneaking(false);
-		case 4 -> {
-			this.player.setSprinting(true);
-			this.player.setExtraKnockback(true);
-		}
-		case 5 -> {
-			this.player.setSprinting(false);
-			this.player.setExtraKnockback(false);
-		}
-		case 3 -> this.player.a(false, true, true);
-		case 6 -> {
-			if (this.player.vehicle != null && this.player.vehicle instanceof EntityHorse) {
-				((EntityHorse) this.player.vehicle).w(packetplayinentityaction.e());
+			case 1 -> this.player.setSneaking(true);
+			case 2 -> this.player.setSneaking(false);
+			case 4 -> {
+				this.player.setSprinting(true);
+				this.player.setExtraKnockback(true);
 			}
-		}
-		case 7 -> {
-			if (this.player.vehicle != null && this.player.vehicle instanceof EntityHorse) {
-				((EntityHorse) this.player.vehicle).g(this.player);
+			case 5 -> {
+				this.player.setSprinting(false);
+				this.player.setExtraKnockback(false);
 			}
-		}
+			case 3 -> this.player.a(false, true, true);
+			case 6 -> {
+				if (this.player.vehicle != null && this.player.vehicle instanceof EntityHorse) {
+					((EntityHorse) this.player.vehicle).w(packetplayinentityaction.e());
+				}
+			}
+			case 7 -> {
+				if (this.player.vehicle != null && this.player.vehicle instanceof EntityHorse) {
+					((EntityHorse) this.player.vehicle).g(this.player);
+				}
+			}
 		}
 
 		/*
@@ -1386,7 +1397,7 @@ public class PlayerConnection implements PacketPlayInListener {
 						final PlayerInteractEntityEvent event = new PlayerInteractEntityEvent(this.getPlayer(),
 								entity.getBukkitEntity());
 						this.server.getPluginManager().callEvent(event);
-	
+
 						// Rinny start - dont repeat code
 						if ((event.isCancelled() || this.player.inventory.getItemInHand() == null
 								|| (this.player.inventory.getItemInHand().getItem() != Items.LEASH
@@ -1399,7 +1410,7 @@ public class PlayerConnection implements PacketPlayInListener {
 													&& entity instanceof EntityHorse);
 							final boolean triggerLeashUpdate = itemInHand != null && itemInHand.getItem() == Items.LEASH
 									&& entity instanceof EntityInsentient;
-	
+
 							if (triggerLeashUpdate) {
 								this.sendPacket(new PacketPlayOutAttachEntity(1, entity,
 										((EntityInsentient) entity).getLeashHolder()));
@@ -1413,9 +1424,9 @@ public class PlayerConnection implements PacketPlayInListener {
 							return;
 						}
 						// CraftBukkit end
-	
+
 						this.player.q(entity);
-	
+
 						// CraftBukkit start
 						if (itemInHand != null && itemInHand.count <= -1) {
 							this.player.updateInventory(this.player.activeContainer);
@@ -1430,13 +1441,13 @@ public class PlayerConnection implements PacketPlayInListener {
 									.warning("Player " + this.player.getName() + " tried to attack an invalid entity");
 							return;
 						}
-						
+
 						if (this.player.isBlocking()) {
 							this.player.bA();
 						}
-	
+
 						this.player.attack(entity);
-	
+
 						// CraftBukkit start
 						if (itemInHand != null && itemInHand.count <= -1) {
 							this.player.updateInventory(this.player.activeContainer);
@@ -1454,36 +1465,37 @@ public class PlayerConnection implements PacketPlayInListener {
 		final EnumClientCommand enumclientcommand = packetplayinclientcommand.c();
 
 		switch (ClientCommandOrdinalWrapper.a[enumclientcommand.ordinal()]) {
-		case 1:
-			if (this.player.viewingCredits) {
-				this.minecraftServer.getPlayerList().changeDimension(this.player, 0,
-						PlayerTeleportEvent.TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom
-																		// portal management
-			} else if (this.player.r().getWorldData().isHardcore()) {
-				if (this.minecraftServer.N() && this.player.getName().equals(this.minecraftServer.M())) {
-					this.player.playerConnection.disconnect("You have died. Game over, man, it\'s game over!");
-					this.minecraftServer.U();
+			case 1:
+				if (this.player.viewingCredits) {
+					this.minecraftServer.getPlayerList().changeDimension(this.player, 0,
+							PlayerTeleportEvent.TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom
+																			// portal management
+				} else if (this.player.r().getWorldData().isHardcore()) {
+					if (this.minecraftServer.N() && this.player.getName().equals(this.minecraftServer.M())) {
+						this.player.playerConnection.disconnect("You have died. Game over, man, it\'s game over!");
+						this.minecraftServer.U();
+					} else {
+						final GameProfileBanEntry gameprofilebanentry = new GameProfileBanEntry(
+								this.player.getProfile(),
+								(Date) null, "(You just lost the game)", (Date) null, "Death in Hardcore");
+
+						this.minecraftServer.getPlayerList().getProfileBans().add(gameprofilebanentry);
+						this.player.playerConnection.disconnect("You have died. Game over, man, it\'s game over!");
+					}
 				} else {
-					final GameProfileBanEntry gameprofilebanentry = new GameProfileBanEntry(this.player.getProfile(),
-							(Date) null, "(You just lost the game)", (Date) null, "Death in Hardcore");
+					if (this.player.getHealth() > 0.0F) {
+						return;
+					}
 
-					this.minecraftServer.getPlayerList().getProfileBans().add(gameprofilebanentry);
-					this.player.playerConnection.disconnect("You have died. Game over, man, it\'s game over!");
+					this.player = this.minecraftServer.getPlayerList().moveToWorld(this.player, 0, false);
 				}
-			} else {
-				if (this.player.getHealth() > 0.0F) {
-					return;
-				}
-
-				this.player = this.minecraftServer.getPlayerList().moveToWorld(this.player, 0, false);
-			}
-			return;
-		case 2:
-			this.player.getStatisticManager().a(this.player);
-			return;
-		case 3:
-			this.player.a((Statistic) AchievementList.f);
-			return;
+				return;
+			case 2:
+				this.player.getStatisticManager().a(this.player);
+				return;
+			case 3:
+				this.player.a((Statistic) AchievementList.f);
+				return;
 		}
 	}
 
@@ -1517,24 +1529,24 @@ public class PlayerConnection implements PacketPlayInListener {
 					if (packetplayinwindowclick.slot == 1) {
 						this.player.updateInventory(this.player.activeContainer);
 						return;
-					} 
+					}
 					if (packetplayinwindowclick.slot > 1)
-						packetplayinwindowclick.slot--; 
-				}  
+						packetplayinwindowclick.slot--;
+				}
 			if (this.networkManager.getVersion() >= 107) {
 				if (this.player.activeContainer instanceof ContainerBrewingStand) {
 					if (packetplayinwindowclick.slot == 4) {
 						this.player.updateInventory(this.player.activeContainer);
 						return;
-					} 
+					}
 					if (packetplayinwindowclick.slot > 4)
-						packetplayinwindowclick.slot--; 
-				} 
+						packetplayinwindowclick.slot--;
+				}
 				if (packetplayinwindowclick.c() == 0 && packetplayinwindowclick.slot == 45) {
 					this.player.updateInventory(this.player.activeContainer);
 					return;
-				} 
-			} 
+				}
+			}
 			// Spigot end
 			SlotType type = CraftInventoryView.getSlotType(inventory, packetplayinwindowclick.d());
 
@@ -1722,7 +1734,10 @@ public class PlayerConnection implements PacketPlayInListener {
 					ItemStack cursor = this.player.inventory.getCarried();
 					action = InventoryAction.NOTHING;
 					// Quick check for if we have any of the item
-					if (inventory.getTopInventory().contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem()))) || inventory.getBottomInventory().contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem())))) {
+					if (inventory.getTopInventory()
+							.contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem())))
+							|| inventory.getBottomInventory()
+									.contains(org.bukkit.Material.getMaterial(Item.getId(cursor.getItem())))) {
 						action = InventoryAction.COLLECT_TO_CURSOR;
 					}
 				}
@@ -1731,7 +1746,8 @@ public class PlayerConnection implements PacketPlayInListener {
 
 			if (packetplayinwindowclick.h() != 5) {
 				if (click == ClickType.NUMBER_KEY) {
-					event = new InventoryClickEvent(inventory, type, packetplayinwindowclick.d(), click, action, packetplayinwindowclick.e());
+					event = new InventoryClickEvent(inventory, type, packetplayinwindowclick.d(), click, action,
+							packetplayinwindowclick.e());
 				} else {
 					event = new InventoryClickEvent(inventory, type, packetplayinwindowclick.d(), click, action);
 				}
@@ -1741,9 +1757,11 @@ public class PlayerConnection implements PacketPlayInListener {
 					org.bukkit.inventory.Recipe recipe = ((CraftingInventory) top).getRecipe();
 					if (recipe != null) {
 						if (click == ClickType.NUMBER_KEY) {
-							event = new CraftItemEvent(recipe, inventory, type, packetplayinwindowclick.d(), click, action, packetplayinwindowclick.e());
+							event = new CraftItemEvent(recipe, inventory, type, packetplayinwindowclick.d(), click,
+									action, packetplayinwindowclick.e());
 						} else {
-							event = new CraftItemEvent(recipe, inventory, type, packetplayinwindowclick.d(), click, action);
+							event = new CraftItemEvent(recipe, inventory, type, packetplayinwindowclick.d(), click,
+									action);
 						}
 					}
 				}
@@ -1751,67 +1769,69 @@ public class PlayerConnection implements PacketPlayInListener {
 				server.getPluginManager().callEvent(event);
 
 				switch (event.getResult()) {
-				case ALLOW:
-				case DEFAULT:
-					itemstack = this.player.activeContainer.clickItem(packetplayinwindowclick.d(),
-							packetplayinwindowclick.e(), packetplayinwindowclick.h(), this.player);
-					break;
-				case DENY:
-					/*
-					 * Needs enum constructor in InventoryAction if (action.modifiesOtherSlots()) {
-					 * 
-					 * } else { if (action.modifiesCursor()) {
-					 * this.player.playerConnection.sendPacket(new Packet103SetSlot(-1, -1,
-					 * this.player.inventory.getCarried())); } if (action.modifiesClicked()) {
-					 * this.player.playerConnection.sendPacket(new
-					 * Packet103SetSlot(this.player.activeContainer.windowId,
-					 * packet102windowclick.slot,
-					 * this.player.activeContainer.getSlot(packet102windowclick.slot).getItem())); }
-					 * }
-					 */
-					switch (action) {
-					// Modified other slots
-					case PICKUP_ALL:
-					case MOVE_TO_OTHER_INVENTORY:
-					case HOTBAR_MOVE_AND_READD:
-					case HOTBAR_SWAP:
-					case COLLECT_TO_CURSOR:
-					case UNKNOWN:
-						this.player.updateInventory(this.player.activeContainer);
+					case ALLOW:
+					case DEFAULT:
+						itemstack = this.player.activeContainer.clickItem(packetplayinwindowclick.d(),
+								packetplayinwindowclick.e(), packetplayinwindowclick.h(), this.player);
 						break;
-					// Modified cursor and clicked
-					case PICKUP_SOME:
-					case PICKUP_HALF:
-					case PICKUP_ONE:
-					case PLACE_ALL:
-					case PLACE_SOME:
-					case PLACE_ONE:
-					case SWAP_WITH_CURSOR:
-						this.player.playerConnection
-								.sendPacket(new PacketPlayOutSetSlot(-1, -1, this.player.inventory.getCarried()));
-						this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
-								this.player.activeContainer.windowId, packetplayinwindowclick.d(),
-								this.player.activeContainer.getSlot(packetplayinwindowclick.d()).getItem()));
-						break;
-					// Modified clicked only
-					case DROP_ALL_SLOT:
-					case DROP_ONE_SLOT:
-						this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
-								this.player.activeContainer.windowId, packetplayinwindowclick.d(),
-								this.player.activeContainer.getSlot(packetplayinwindowclick.d()).getItem()));
-						break;
-					// Modified cursor only
-					case DROP_ALL_CURSOR:
-					case DROP_ONE_CURSOR:
-					case CLONE_STACK:
-						this.player.playerConnection
-								.sendPacket(new PacketPlayOutSetSlot(-1, -1, this.player.inventory.getCarried()));
-						break;
-					// Nothing
-					case NOTHING:
-						break;
-					}
-					return;
+					case DENY:
+						/*
+						 * Needs enum constructor in InventoryAction if (action.modifiesOtherSlots()) {
+						 * 
+						 * } else { if (action.modifiesCursor()) {
+						 * this.player.playerConnection.sendPacket(new Packet103SetSlot(-1, -1,
+						 * this.player.inventory.getCarried())); } if (action.modifiesClicked()) {
+						 * this.player.playerConnection.sendPacket(new
+						 * Packet103SetSlot(this.player.activeContainer.windowId,
+						 * packet102windowclick.slot,
+						 * this.player.activeContainer.getSlot(packet102windowclick.slot).getItem())); }
+						 * }
+						 */
+						switch (action) {
+							// Modified other slots
+							case PICKUP_ALL:
+							case MOVE_TO_OTHER_INVENTORY:
+							case HOTBAR_MOVE_AND_READD:
+							case HOTBAR_SWAP:
+							case COLLECT_TO_CURSOR:
+							case UNKNOWN:
+								this.player.updateInventory(this.player.activeContainer);
+								break;
+							// Modified cursor and clicked
+							case PICKUP_SOME:
+							case PICKUP_HALF:
+							case PICKUP_ONE:
+							case PLACE_ALL:
+							case PLACE_SOME:
+							case PLACE_ONE:
+							case SWAP_WITH_CURSOR:
+								this.player.playerConnection
+										.sendPacket(
+												new PacketPlayOutSetSlot(-1, -1, this.player.inventory.getCarried()));
+								this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
+										this.player.activeContainer.windowId, packetplayinwindowclick.d(),
+										this.player.activeContainer.getSlot(packetplayinwindowclick.d()).getItem()));
+								break;
+							// Modified clicked only
+							case DROP_ALL_SLOT:
+							case DROP_ONE_SLOT:
+								this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
+										this.player.activeContainer.windowId, packetplayinwindowclick.d(),
+										this.player.activeContainer.getSlot(packetplayinwindowclick.d()).getItem()));
+								break;
+							// Modified cursor only
+							case DROP_ALL_CURSOR:
+							case DROP_ONE_CURSOR:
+							case CLONE_STACK:
+								this.player.playerConnection
+										.sendPacket(
+												new PacketPlayOutSetSlot(-1, -1, this.player.inventory.getCarried()));
+								break;
+							// Nothing
+							case NOTHING:
+								break;
+						}
+						return;
 				}
 			}
 			// CraftBukkit end
@@ -1862,8 +1882,11 @@ public class PlayerConnection implements PacketPlayInListener {
 			final boolean flag1 = packetplayinsetcreativeslot.c() >= 1
 					&& packetplayinsetcreativeslot.c() < 36 + PlayerInventory.getHotbarSize();
 			// CraftBukkit - Add invalidItems check
-			boolean flag2 = itemstack == null || itemstack.getItem() != null && (!invalidItems.contains(Item.getId(itemstack.getItem())) || !org.spigotmc.SpigotConfig.filterCreativeItems); // Spigot
-			boolean flag3 = itemstack == null || itemstack.getData() >= 0 && itemstack.count <= 64 && itemstack.count > 0;
+			boolean flag2 = itemstack == null
+					|| itemstack.getItem() != null && (!invalidItems.contains(Item.getId(itemstack.getItem()))
+							|| !org.spigotmc.SpigotConfig.filterCreativeItems); // Spigot
+			boolean flag3 = itemstack == null
+					|| itemstack.getData() >= 0 && itemstack.count <= 64 && itemstack.count > 0;
 
 			// CraftBukkit start - Call click event
 			if (flag || (flag1 && !ItemStack.matches(
@@ -1889,21 +1912,21 @@ public class PlayerConnection implements PacketPlayInListener {
 				itemstack = CraftItemStack.asNMSCopy(event.getCursor());
 
 				switch (event.getResult()) {
-				case ALLOW:
-					// Plugin cleared the id / stacksize checks
-					flag2 = flag3 = true;
-					break;
-				case DEFAULT:
-					break;
-				case DENY:
-					// Reset the slot
-					if (packetplayinsetcreativeslot.c() >= 0) {
-						this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
-								this.player.defaultContainer.windowId, packetplayinsetcreativeslot.c(),
-								this.player.defaultContainer.getSlot(packetplayinsetcreativeslot.c()).getItem()));
-						this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, null));
-					}
-					return;
+					case ALLOW:
+						// Plugin cleared the id / stacksize checks
+						flag2 = flag3 = true;
+						break;
+					case DEFAULT:
+						break;
+					case DENY:
+						// Reset the slot
+						if (packetplayinsetcreativeslot.c() >= 0) {
+							this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(
+									this.player.defaultContainer.windowId, packetplayinsetcreativeslot.c(),
+									this.player.defaultContainer.getSlot(packetplayinsetcreativeslot.c()).getItem()));
+							this.player.playerConnection.sendPacket(new PacketPlayOutSetSlot(-1, -1, null));
+						}
+						return;
 				}
 			}
 			// CraftBukkit end
@@ -2294,44 +2317,55 @@ public class PlayerConnection implements PacketPlayInListener {
 			throw new IllegalStateException("Unexpected change in protocol!");
 		}
 	}
-	
+
 	public void handleVehicleMove(PacketPlayInVehicleMove packet) {
-	    if (!Doubles.isFinite(packet.x) || !Doubles.isFinite(packet.y) || !Doubles.isFinite(packet.z) || !Floats.isFinite(packet.yaw) || !Floats.isFinite(packet.pitch)) {
-	    	disconnect("Invalid move vehicle packet received");
-	    	return;
-	    } 
-	    Entity vehicle = this.player.vehicle;
-	    if (vehicle == null) {
-	    	return; 
-	    }
-	    double currentX = vehicle.locX;
-	    double currentY = vehicle.locY;
-	    double currentZ = vehicle.locZ;
-	    double dx = packet.x - currentX;
-	    double dy = packet.y - currentY;
-	    double dz = packet.z - currentZ;
-	    /*double moveSquared = dx * dx + dy * dy + dz * dz;
-	    if (moveSquared > SpigotConfig.movedTooQuicklyThreshold) {
-	      c.warn(this.player.getName() + " moves their vehicle (" + vehicle.getClass().getSimpleName() + ") too quickly! " + dx + ", " + dy + ", " + dz);
-	      sendPacket((Packet)new PacketPlayOutVehicleMove(vehicle));
-	      return;
-	    } */
-	    boolean currentlyInBlock = !vehicle.world.getCubes(vehicle, vehicle.boundingBox.shrink(0.0625D, 0.0625D, 0.0625D)).isEmpty();
-	    boolean movedWrongly = false;
-	    vehicle.move(dx, dy, dz);
-	    /*if (vehicle.e(packet.x, packet.y, packet.z) > SpigotConfig.movedWronglyThreshold) {
-	      c.warn(this.player.getName() + " moves their vehicle (" + vehicle.getClass().getSimpleName() + ") wrongly!");
-	      movedWrongly = true;
-	    } */
-	    vehicle.setLocation(packet.x, packet.y, packet.z, packet.yaw, packet.pitch);
-	    boolean destInBlock = !vehicle.world.getCubes(vehicle, vehicle.boundingBox.shrink(0.0625D, 0.0625D, 0.0625D)).isEmpty();
-	    if (!currentlyInBlock && (movedWrongly || destInBlock)) {
-	    	vehicle.setLocation(currentX, currentY, currentZ, packet.yaw, packet.pitch);
-	    	sendPacket((Packet)new PacketPlayOutVehicleMove(vehicle));
-	    	return;
-	    } 
-	    this.minecraftServer.getPlayerList().d(this.player);
-	  }
+		if (!Doubles.isFinite(packet.x) || !Doubles.isFinite(packet.y) || !Doubles.isFinite(packet.z)
+				|| !Floats.isFinite(packet.yaw) || !Floats.isFinite(packet.pitch)) {
+			disconnect("Invalid move vehicle packet received");
+			return;
+		}
+		Entity vehicle = this.player.vehicle;
+		if (vehicle == null) {
+			return;
+		}
+		double currentX = vehicle.locX;
+		double currentY = vehicle.locY;
+		double currentZ = vehicle.locZ;
+		double dx = packet.x - currentX;
+		double dy = packet.y - currentY;
+		double dz = packet.z - currentZ;
+		/*
+		 * double moveSquared = dx * dx + dy * dy + dz * dz;
+		 * if (moveSquared > SpigotConfig.movedTooQuicklyThreshold) {
+		 * c.warn(this.player.getName() + " moves their vehicle (" +
+		 * vehicle.getClass().getSimpleName() + ") too quickly! " + dx + ", " + dy +
+		 * ", " + dz);
+		 * sendPacket((Packet)new PacketPlayOutVehicleMove(vehicle));
+		 * return;
+		 * }
+		 */
+		boolean currentlyInBlock = !vehicle.world
+				.getCubes(vehicle, vehicle.boundingBox.shrink(0.0625D, 0.0625D, 0.0625D)).isEmpty();
+		boolean movedWrongly = false;
+		vehicle.move(dx, dy, dz);
+		/*
+		 * if (vehicle.e(packet.x, packet.y, packet.z) >
+		 * SpigotConfig.movedWronglyThreshold) {
+		 * c.warn(this.player.getName() + " moves their vehicle (" +
+		 * vehicle.getClass().getSimpleName() + ") wrongly!");
+		 * movedWrongly = true;
+		 * }
+		 */
+		vehicle.setLocation(packet.x, packet.y, packet.z, packet.yaw, packet.pitch);
+		boolean destInBlock = !vehicle.world.getCubes(vehicle, vehicle.boundingBox.shrink(0.0625D, 0.0625D, 0.0625D))
+				.isEmpty();
+		if (!currentlyInBlock && (movedWrongly || destInBlock)) {
+			vehicle.setLocation(currentX, currentY, currentZ, packet.yaw, packet.pitch);
+			sendPacket((Packet) new PacketPlayOutVehicleMove(vehicle));
+			return;
+		}
+		this.minecraftServer.getPlayerList().d(this.player);
+	}
 
 	public void handleUseItem(PacketPlayInUseItem packet) {
 		if (packet.hand == 1) {
