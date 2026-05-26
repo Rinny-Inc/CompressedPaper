@@ -213,7 +213,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -281,8 +281,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.14.0</version>
         <configuration>
-		  	<source>23</source>
-          	<release>23</release>
+		  	    <source>26</source>
+          	<release>26</release>
         </configuration>
       </plugin>
       <plugin>
