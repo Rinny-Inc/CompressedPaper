@@ -15,18 +15,19 @@ public class Location implements Cloneable {
     private float yaw;
 
     public Location(final World world, final double[] num) { // Rinny
-    	this.world = world;
+        this.world = world;
         this.x = num[0];
         this.y = num[1];
         this.z = num[2];
     }
+
     /**
      * Constructs a new Location with the given coordinates
      *
      * @param world The world in which this location resides
-     * @param x The x-coordinate of this new location
-     * @param y The y-coordinate of this new location
-     * @param z The z-coordinate of this new location
+     * @param x     The x-coordinate of this new location
+     * @param y     The y-coordinate of this new location
+     * @param z     The z-coordinate of this new location
      */
     public Location(final World world, final double x, final double y, final double z) {
         this(world, x, y, z, 0, 0);
@@ -36,13 +37,14 @@ public class Location implements Cloneable {
      * Constructs a new Location with the given coordinates and direction
      *
      * @param world The world in which this location resides
-     * @param x The x-coordinate of this new location
-     * @param y The y-coordinate of this new location
-     * @param z The z-coordinate of this new location
-     * @param yaw The absolute rotation on the x-plane, in degrees
+     * @param x     The x-coordinate of this new location
+     * @param y     The y-coordinate of this new location
+     * @param z     The z-coordinate of this new location
+     * @param yaw   The absolute rotation on the x-plane, in degrees
      * @param pitch The absolute rotation on the y-plane, in degrees
      */
-    public Location(final World world, final double x, final double y, final double z, final float yaw, final float pitch) {
+    public Location(final World world, final double x, final double y, final double z, final float yaw,
+            final float pitch) {
         this.world = world;
         this.x = x;
         this.y = y;
@@ -212,7 +214,7 @@ public class Location implements Cloneable {
      * <ul>
      * <li>A pitch of 0 represents level forward facing.
      * <li>A pitch of 90 represents downward facing, or negative y
-     *     direction.
+     * direction.
      * <li>A pitch of -90 represents upward facing, or positive y direction.
      * <ul>
      * Increasing pitch values the equivalent of looking down.
@@ -228,7 +230,7 @@ public class Location implements Cloneable {
      * <ul>
      * <li>A pitch of 0 represents level forward facing.
      * <li>A pitch of 90 represents downward facing, or negative y
-     *     direction.
+     * direction.
      * <li>A pitch of -90 represents upward facing, or positive y direction.
      * <ul>
      * Increasing pitch values the equivalent of looking down.
@@ -244,22 +246,22 @@ public class Location implements Cloneable {
      * facing.
      *
      * @return a vector pointing the direction of this location's {@link
-     *     #getPitch() pitch} and {@link #getYaw() yaw}
+     *         #getPitch() pitch} and {@link #getYaw() yaw}
      */
     public Vector getDirection() {
-        Vector vector = new Vector();
+        final double yawRad = Math.toRadians(yaw);
+        final double pitchRad = Math.toRadians(pitch);
 
-        double rotX = this.getYaw();
-        double rotY = this.getPitch();
+        final double sinPitch = Math.sin(pitchRad);
+        final double cosPitch = Math.cos(pitchRad);
 
-        vector.setY(-Math.sin(Math.toRadians(rotY)));
+        final double sinYaw = Math.sin(yawRad);
+        final double cosYaw = Math.cos(yawRad);
 
-        double xz = Math.cos(Math.toRadians(rotY));
-
-        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
-        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
-
-        return vector;
+        return new Vector(
+                -cosPitch * sinYaw,
+                -sinPitch,
+                cosPitch * cosYaw);
     }
 
     /**
@@ -406,8 +408,8 @@ public class Location implements Cloneable {
      * @return the magnitude
      */
     public double length() {
-        //return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-    	return Math.hypot(Math.hypot(x, y), z); // Rinny
+        // return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        return Math.hypot(Math.hypot(x, y), z); // Rinny
     }
 
     /**
@@ -451,10 +453,15 @@ public class Location implements Cloneable {
         } else if (o.getWorld() == null || getWorld() == null) {
             throw new IllegalArgumentException("Cannot measure distance to a null world");
         } else if (o.getWorld() != getWorld()) {
-            throw new IllegalArgumentException("Cannot measure distance between " + getWorld().getName() + " and " + o.getWorld().getName());
+            throw new IllegalArgumentException(
+                    "Cannot measure distance between " + getWorld().getName() + " and " + o.getWorld().getName());
         }
 
-        return Math.pow(x - o.x, 2) + Math.pow(y - o.y, 2) + Math.pow(z - o.z, 2);
+        final double dx = x - o.x;
+        final double dy = y - o.y;
+        final double dz = z - o.z;
+
+        return dx * dx + dy * dy + dz * dz;
     }
 
     /**
@@ -531,14 +538,15 @@ public class Location implements Cloneable {
 
     @Override
     public String toString() {
-        return "Location{" + "world=" + world + ",x=" + x + ",y=" + y + ",z=" + z + ",pitch=" + pitch + ",yaw=" + yaw + '}';
+        return "Location{" + "world=" + world + ",x=" + x + ",y=" + y + ",z=" + z + ",pitch=" + pitch + ",yaw=" + yaw
+                + '}';
     }
 
     /**
      * Constructs a new {@link Vector} based on this Location
      *
      * @return New Vector containing the coordinates represented by this
-     *     Location
+     *         Location
      */
     public Vector toVector() {
         return new Vector(x, y, z);
