@@ -249,6 +249,7 @@ public class Location implements Cloneable {
      *         #getPitch() pitch} and {@link #getYaw() yaw}
      */
     public Vector getDirection() {
+        // Rinny - cache value
         final double yawRad = Math.toRadians(yaw);
         final double pitchRad = Math.toRadians(pitch);
 
@@ -262,6 +263,7 @@ public class Location implements Cloneable {
                 -cosPitch * sinYaw,
                 -sinPitch,
                 cosPitch * cosYaw);
+        // Rinny
     }
 
     /**
@@ -457,11 +459,13 @@ public class Location implements Cloneable {
                     "Cannot measure distance between " + getWorld().getName() + " and " + o.getWorld().getName());
         }
 
+        // Rinny - don't use Math
         final double dx = x - o.x;
         final double dy = y - o.y;
         final double dz = z - o.z;
 
         return dx * dx + dy * dy + dz * dz;
+        // Rinny
     }
 
     /**
