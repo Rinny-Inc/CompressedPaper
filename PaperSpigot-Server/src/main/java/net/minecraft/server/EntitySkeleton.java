@@ -31,7 +31,7 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
 
     protected void c() {
         super.c();
-        this.datawatcher.a(13, new Byte((byte) 0));
+        this.datawatcher.a(13, (byte) 0);
     }
 
     public boolean bk() {
@@ -74,7 +74,8 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
         if (this.world.w() && !this.world.isStatic) {
             float f = this.d(1.0F);
 
-            if (f > 0.5F && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && this.world.i(MathHelper.floor(this.locX), MathHelper.floor(this.locY), MathHelper.floor(this.locZ))) {
+            if (f > 0.5F && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && this.world
+                    .i(MathHelper.floor(this.locX), MathHelper.floor(this.locY), MathHelper.floor(this.locZ))) {
                 boolean flag = true;
                 ItemStack itemstack = this.getEquipment(4);
 
@@ -187,7 +188,8 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
             Calendar calendar = this.world.V();
 
             if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.random.nextFloat() < 0.25F) {
-                this.setEquipment(4, new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.PUMPKIN));
+                this.setEquipment(4,
+                        new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.JACK_O_LANTERN : Blocks.PUMPKIN));
                 this.dropChances[4] = 0.0F;
             }
         }
@@ -208,11 +210,13 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
     }
 
     public void a(EntityLiving entityliving, float f) {
-        EntityArrow entityarrow = new EntityArrow(this.world, this, entityliving, 1.6F, (float) (14 - this.world.difficulty.a() * 4));
+        EntityArrow entityarrow = new EntityArrow(this.world, this, entityliving, 1.6F,
+                (float) (14 - this.world.difficulty.a() * 4));
         int i = EnchantmentManager.getEnchantmentLevel(Enchantment.ARROW_DAMAGE.id, this.be());
         int j = EnchantmentManager.getEnchantmentLevel(Enchantment.ARROW_KNOCKBACK.id, this.be());
 
-        entityarrow.b((double) (f * 2.0F) + this.random.nextGaussian() * 0.25D + (double) ((float) this.world.difficulty.a() * 0.11F));
+        entityarrow.b((double) (f * 2.0F) + this.random.nextGaussian() * 0.25D
+                + (double) ((float) this.world.difficulty.a() * 0.11F));
         if (i > 0) {
             entityarrow.b(entityarrow.e() + (double) i * 0.5D + 0.5D);
         }
@@ -221,7 +225,8 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
             entityarrow.setKnockbackStrength(j);
         }
 
-        if (EnchantmentManager.getEnchantmentLevel(Enchantment.ARROW_FIRE.id, this.be()) > 0 || this.getSkeletonType() == 1) {
+        if (EnchantmentManager.getEnchantmentLevel(Enchantment.ARROW_FIRE.id, this.be()) > 0
+                || this.getSkeletonType() == 1) {
             // CraftBukkit start - call EntityCombustEvent
             EntityCombustEvent event = new EntityCombustEvent(entityarrow.getBukkitEntity(), 100);
             this.world.getServer().getPluginManager().callEvent(event);
@@ -233,7 +238,8 @@ public class EntitySkeleton extends EntityMonster implements IRangedEntity {
         }
 
         // CraftBukkit start
-        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.be(), entityarrow, 0.8F);
+        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory
+                .callEntityShootBowEvent(this, this.be(), entityarrow, 0.8F);
         if (event.isCancelled()) {
             event.getProjectile().remove();
             return;

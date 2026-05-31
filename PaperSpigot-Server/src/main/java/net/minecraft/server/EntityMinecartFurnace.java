@@ -21,7 +21,7 @@ public class EntityMinecartFurnace extends EntityMinecartAbstract {
 
 	protected void c() {
 		super.c();
-		this.datawatcher.a(16, new Byte((byte) 0));
+		this.datawatcher.a(16, (byte) 0);
 	}
 
 	public void tick() {

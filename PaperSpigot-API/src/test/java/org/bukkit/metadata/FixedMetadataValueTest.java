@@ -13,15 +13,15 @@ public class FixedMetadataValueTest {
 
     @Test
     public void testBasic() {
-        subject = new FixedMetadataValue(plugin, new Integer(50));
+        subject = new FixedMetadataValue(plugin, 50);
         assertSame(plugin, subject.getOwningPlugin());
-        assertEquals(new Integer(50), subject.value());
+        assertEquals(50, subject.value());
     }
 
     @Test
     public void testNumberTypes() {
-        subject = new FixedMetadataValue(plugin, new Integer(5));
-        assertEquals(new Integer(5), subject.value());
+        subject = new FixedMetadataValue(plugin, 5);
+        assertEquals(5, subject.value());
         assertEquals(5, subject.asInt());
         assertEquals(true, subject.asBoolean());
         assertEquals(5, subject.asByte());

@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 public class EntitySheep extends EntityAnimal {
 
     private final InventoryCrafting bq = new InventoryCrafting(new ContainerSheepBreed(this), 2, 1);
-    public static final float[][] bp = new float[][] { { 1.0F, 1.0F, 1.0F}, { 0.85F, 0.5F, 0.2F}, { 0.7F, 0.3F, 0.85F}, { 0.4F, 0.6F, 0.85F}, { 0.9F, 0.9F, 0.2F}, { 0.5F, 0.8F, 0.1F}, { 0.95F, 0.5F, 0.65F}, { 0.3F, 0.3F, 0.3F}, { 0.6F, 0.6F, 0.6F}, { 0.3F, 0.5F, 0.6F}, { 0.5F, 0.25F, 0.7F}, { 0.2F, 0.3F, 0.7F}, { 0.4F, 0.3F, 0.2F}, { 0.4F, 0.5F, 0.2F}, { 0.6F, 0.2F, 0.2F}, { 0.1F, 0.1F, 0.1F}};
+    public static final float[][] bp = new float[][] { { 1.0F, 1.0F, 1.0F }, { 0.85F, 0.5F, 0.2F },
+            { 0.7F, 0.3F, 0.85F }, { 0.4F, 0.6F, 0.85F }, { 0.9F, 0.9F, 0.2F }, { 0.5F, 0.8F, 0.1F },
+            { 0.95F, 0.5F, 0.65F }, { 0.3F, 0.3F, 0.3F }, { 0.6F, 0.6F, 0.6F }, { 0.3F, 0.5F, 0.6F },
+            { 0.5F, 0.25F, 0.7F }, { 0.2F, 0.3F, 0.7F }, { 0.4F, 0.3F, 0.2F }, { 0.4F, 0.5F, 0.2F },
+            { 0.6F, 0.2F, 0.2F }, { 0.1F, 0.1F, 0.1F } };
     private int br;
     private PathfinderGoalEatTile bs = new PathfinderGoalEatTile(this);
 
@@ -28,7 +32,7 @@ public class EntitySheep extends EntityAnimal {
         this.goalSelector.a(7, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 6.0F));
         this.goalSelector.a(8, new PathfinderGoalRandomLookaround(this));
         // Rinny
-        final ItemStack ink  = new ItemStack(Items.INK_SACK, 1, 0);
+        final ItemStack ink = new ItemStack(Items.INK_SACK, 1, 0);
         this.bq.setItem(0, ink);
         this.bq.setItem(1, ink);
         // Rinny
@@ -60,7 +64,7 @@ public class EntitySheep extends EntityAnimal {
 
     protected void c() {
         super.c();
-        this.datawatcher.a(16, new Byte((byte) 0));
+        this.datawatcher.a(16, (byte) 0);
     }
 
     protected void dropDeathLoot(boolean flag, int i) {
@@ -79,7 +83,8 @@ public class EntitySheep extends EntityAnimal {
         if (itemstack != null && itemstack.getItem() == Items.SHEARS && !this.isSheared() && !this.isBaby()) {
             if (!this.world.isStatic) {
                 // CraftBukkit start
-                PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), this.getBukkitEntity());
+                PlayerShearEntityEvent event = new PlayerShearEntityEvent(
+                        (org.bukkit.entity.Player) entityhuman.getBukkitEntity(), this.getBukkitEntity());
                 this.world.getServer().getPluginManager().callEvent(event);
 
                 if (event.isCancelled()) {
@@ -91,7 +96,8 @@ public class EntitySheep extends EntityAnimal {
                 int i = 1 + this.random.nextInt(3);
 
                 for (int j = 0; j < i; ++j) {
-                    EntityItem entityitem = this.a(new ItemStack(Item.getItemOf(Blocks.WOOL), 1, this.getColor()), 1.0F);
+                    EntityItem entityitem = this.a(new ItemStack(Item.getItemOf(Blocks.WOOL), 1, this.getColor()),
+                            1.0F);
 
                     entityitem.motY += (double) (this.random.nextFloat() * 0.05F);
                     entityitem.motX += (double) ((this.random.nextFloat() - this.random.nextFloat()) * 0.1F);

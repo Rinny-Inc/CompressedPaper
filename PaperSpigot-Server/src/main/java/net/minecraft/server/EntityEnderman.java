@@ -10,7 +10,8 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 public class EntityEnderman extends EntityMonster {
 
     private static final UUID bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-    private static final AttributeModifier bq = (new AttributeModifier(bp, "Attacking speed boost", 6.199999809265137D, 0)).a(false);
+    private static final AttributeModifier bq = (new AttributeModifier(bp, "Attacking speed boost", 6.199999809265137D,
+            0)).a(false);
     private static boolean[] br = new boolean[256];
     private int bs;
     private int bt;
@@ -32,9 +33,9 @@ public class EntityEnderman extends EntityMonster {
 
     protected void c() {
         super.c();
-        this.datawatcher.a( 16, new Byte((byte) 0) ); // Spigot - protocol patch, handle metadata change
-        this.datawatcher.a(17, new Byte((byte) 0));
-        this.datawatcher.a(18, new Byte((byte) 0));
+        this.datawatcher.a(16, (byte) 0); // Spigot - protocol patch, handle metadata change
+        this.datawatcher.a(17, (byte) 0);
+        this.datawatcher.a(18, (byte) 0);
     }
 
     public void b(NBTTagCompound nbttagcompound) {
@@ -56,7 +57,8 @@ public class EntityEnderman extends EntityMonster {
             if (this.f(entityhuman)) {
                 this.bv = true;
                 if (this.bt == 0) {
-                    this.world.makeSound(entityhuman.locX, entityhuman.locY, entityhuman.locZ, "mob.endermen.stare", 1.0F, 1.0F);
+                    this.world.makeSound(entityhuman.locX, entityhuman.locY, entityhuman.locZ, "mob.endermen.stare",
+                            1.0F, 1.0F);
                 }
 
                 if (this.bt++ == 5) {
@@ -79,7 +81,8 @@ public class EntityEnderman extends EntityMonster {
             return false;
         } else {
             Vec3D vec3d = entityhuman.j(1.0F).a();
-            Vec3D vec3d1 = Vec3D.a(this.locX - entityhuman.locX, (this.locY + (double) this.getHeadHeight()) - (entityhuman.locY + (double) entityhuman.getHeadHeight()), this.locZ - entityhuman.locZ);
+            Vec3D vec3d1 = Vec3D.a(this.locX - entityhuman.locX, (this.locY + (double) this.getHeadHeight())
+                    - (entityhuman.locY + (double) entityhuman.getHeadHeight()), this.locZ - entityhuman.locZ);
             double d0 = vec3d1.b();
 
             vec3d1 = vec3d1.a();
@@ -119,7 +122,8 @@ public class EntityEnderman extends EntityMonster {
                     block = this.world.getType(i, j, k);
                     if (br[Block.getId(block)]) {
                         // CraftBukkit start - Pickup event
-                        if (!CraftEventFactory.callEntityChangeBlockEvent(this, this.world.getWorld().getBlockAt(i, j, k), org.bukkit.Material.AIR).isCancelled()) {
+                        if (!CraftEventFactory.callEntityChangeBlockEvent(this,
+                                this.world.getWorld().getBlockAt(i, j, k), org.bukkit.Material.AIR).isCancelled()) {
                             this.setCarried(block);
                             this.setCarriedData(this.world.getData(i, j, k));
                             this.world.setTypeUpdate(i, j, k, Blocks.AIR);
@@ -136,7 +140,9 @@ public class EntityEnderman extends EntityMonster {
 
                 if (block.getMaterial() == Material.AIR && block1.getMaterial() != Material.AIR && block1.d()) {
                     // CraftBukkit start - Place event
-                    if (!CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.getCarried(), this.getCarriedData()).isCancelled()) {
+                    if (!CraftEventFactory
+                            .callEntityChangeBlockEvent(this, i, j, k, this.getCarried(), this.getCarriedData())
+                            .isCancelled()) {
                         this.world.setTypeAndData(i, j, k, this.getCarried(), this.getCarriedData(), 3);
                         this.setCarried(Blocks.AIR);
                     }
@@ -146,13 +152,18 @@ public class EntityEnderman extends EntityMonster {
         }
 
         for (i = 0; i < 2; ++i) {
-            this.world.addParticle("portal", this.locX + (this.random.nextDouble() - 0.5D) * (double) this.width, this.locY + this.random.nextDouble() * (double) this.length - 0.25D, this.locZ + (this.random.nextDouble() - 0.5D) * (double) this.width, (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
+            this.world.addParticle("portal", this.locX + (this.random.nextDouble() - 0.5D) * (double) this.width,
+                    this.locY + this.random.nextDouble() * (double) this.length - 0.25D,
+                    this.locZ + (this.random.nextDouble() - 0.5D) * (double) this.width,
+                    (this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(),
+                    (this.random.nextDouble() - 0.5D) * 2.0D);
         }
 
         if (this.world.w() && !this.world.isStatic) {
             float f = this.d(1.0F);
 
-            if (f > 0.5F && this.world.i(MathHelper.floor(this.locX), MathHelper.floor(this.locY), MathHelper.floor(this.locZ)) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
+            if (f > 0.5F && this.world.i(MathHelper.floor(this.locX), MathHelper.floor(this.locY),
+                    MathHelper.floor(this.locZ)) && this.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F) {
                 this.target = null;
                 this.a(false);
                 this.bv = false;
@@ -205,7 +216,9 @@ public class EntityEnderman extends EntityMonster {
     }
 
     protected boolean c(Entity entity) {
-    	Vec3D vec3d = Vec3D.a(this.locX - entity.locX, this.locY + (double) this.getHeadHeight() - entity.locY + (double) entity.getHeadHeight(), this.locZ - entity.locZ);
+        Vec3D vec3d = Vec3D.a(this.locX - entity.locX,
+                this.locY + (double) this.getHeadHeight() - entity.locY + (double) entity.getHeadHeight(),
+                this.locZ - entity.locZ);
 
         vec3d = vec3d.a();
         double d0 = 16.0D;
@@ -245,7 +258,9 @@ public class EntityEnderman extends EntityMonster {
 
             if (flag1) {
                 // CraftBukkit start - Teleport event
-                EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), new Location(this.world.getWorld(), d3, d4, d5), new Location(this.world.getWorld(), this.locX, this.locY, this.locZ));
+                EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(),
+                        new Location(this.world.getWorld(), d3, d4, d5),
+                        new Location(this.world.getWorld(), this.locX, this.locY, this.locZ));
                 this.world.getServer().getPluginManager().callEvent(teleport);
                 if (teleport.isCancelled()) {
                     return false;
@@ -255,7 +270,8 @@ public class EntityEnderman extends EntityMonster {
                 this.setPosition(to.getX(), to.getY(), to.getZ());
                 // CraftBukkit end
 
-                if (this.world.getCubes(this, this.boundingBox).isEmpty() && !this.world.containsLiquid(this.boundingBox)) {
+                if (this.world.getCubes(this, this.boundingBox).isEmpty()
+                        && !this.world.containsLiquid(this.boundingBox)) {
                     flag = true;
                 }
             }
@@ -311,7 +327,7 @@ public class EntityEnderman extends EntityMonster {
                 this.a(item, 1);
             }
         }
-        
+
         Item carriedItem = Item.getItemOf(getCarried());
         if (carriedItem != null) {
             this.a(carriedItem, 1);
@@ -319,11 +335,12 @@ public class EntityEnderman extends EntityMonster {
     }
 
     public void setCarried(Block block) {
-        this.datawatcher.watch( 16, Byte.valueOf((byte)(Block.getId(block) & 0xFF))); // Spigot - protocol patch, handle metadata change
+        this.datawatcher.watch(16, Byte.valueOf((byte) (Block.getId(block) & 0xFF))); // Spigot - protocol patch, handle
+                                                                                      // metadata change
     }
 
     public Block getCarried() {
-        return Block.getById(this.datawatcher.getShort( 16 )); // Spigot - protocol patch, handle metadata change
+        return Block.getById(this.datawatcher.getByte(16 & 0xFF)); // Spigot - protocol patch, handle metadata change
     }
 
     public void setCarriedData(int i) {

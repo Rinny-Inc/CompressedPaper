@@ -26,12 +26,12 @@ public class EntitySlime extends EntityInsentient implements IMonster {
 
     protected void c() {
         super.c();
-        this.datawatcher.a(16, new Byte((byte) 1));
+        this.datawatcher.a(16, (byte) 1);
     }
 
     // CraftBukkit - protected -> public
     public void setSize(int i) {
-        this.datawatcher.watch(16, new Byte((byte) i));
+        this.datawatcher.watch(16, (byte) i);
         this.a(0.6F * (float) i, 0.6F * (float) i);
         this.setPosition(this.locX, this.locY, this.locZ);
         this.getAttributeInstance(GenericAttributes.maxHealth).setValue((double) (i * i));
@@ -88,11 +88,13 @@ public class EntitySlime extends EntityInsentient implements IMonster {
                 float f2 = MathHelper.sin(f) * (float) i * 0.5F * f1;
                 float f3 = MathHelper.cos(f) * (float) i * 0.5F * f1;
 
-                this.world.addParticle(this.bP(), this.locX + (double) f2, this.boundingBox.b, this.locZ + (double) f3, 0.0D, 0.0D, 0.0D);
+                this.world.addParticle(this.bP(), this.locX + (double) f2, this.boundingBox.b, this.locZ + (double) f3,
+                        0.0D, 0.0D, 0.0D);
             }
 
             if (this.bW()) {
-                this.makeSound(this.bV(), this.bf(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
+                this.makeSound(this.bV(), this.bf(),
+                        ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
             }
 
             this.h = -0.5F;
@@ -114,9 +116,11 @@ public class EntitySlime extends EntityInsentient implements IMonster {
         EntityTargetEvent event = null;
 
         if (entityhuman != null && !entityhuman.equals(lastTarget)) {
-            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
+            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman,
+                    EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
         } else if (lastTarget != null && entityhuman == null) {
-            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman, EntityTargetEvent.TargetReason.FORGOT_TARGET);
+            event = CraftEventFactory.callEntityTargetEvent(this, entityhuman,
+                    EntityTargetEvent.TargetReason.FORGOT_TARGET);
         }
 
         if (event != null && !event.isCancelled()) {
@@ -138,7 +142,8 @@ public class EntitySlime extends EntityInsentient implements IMonster {
 
             this.bc = true;
             if (this.bY()) {
-                this.makeSound(this.bV(), this.bf(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) * 0.8F);
+                this.makeSound(this.bV(), this.bf(),
+                        ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) * 0.8F);
             }
 
             this.bd = 1.0F - this.random.nextFloat() * 2.0F;
@@ -187,8 +192,11 @@ public class EntitySlime extends EntityInsentient implements IMonster {
                 EntitySlime entityslime = this.bQ();
 
                 entityslime.setSize(i / 2);
-                entityslime.setPositionRotation(this.locX + (double) f, this.locY + 0.5D, this.locZ + (double) f1, this.random.nextFloat() * 360.0F, 0.0F);
-                this.world.addEntity(entityslime, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
+                entityslime.setPositionRotation(this.locX + (double) f, this.locY + 0.5D, this.locZ + (double) f1,
+                        this.random.nextFloat() * 360.0F, 0.0F);
+                this.world.addEntity(entityslime, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit
+                                                                                                                       // -
+                                                                                                                       // SpawnReason
             }
         }
 
@@ -199,7 +207,8 @@ public class EntitySlime extends EntityInsentient implements IMonster {
         if (this.bT()) {
             int i = this.getSize();
 
-            if (this.hasLineOfSight(entityhuman) && this.f(entityhuman) < 0.6D * (double) i * 0.6D * (double) i && entityhuman.damageEntity(DamageSource.mobAttack(this), (float) this.bU())) {
+            if (this.hasLineOfSight(entityhuman) && this.f(entityhuman) < 0.6D * (double) i * 0.6D * (double) i
+                    && entityhuman.damageEntity(DamageSource.mobAttack(this), (float) this.bU())) {
                 this.makeSound("mob.attack", 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             }
         }
@@ -234,7 +243,10 @@ public class EntitySlime extends EntityInsentient implements IMonster {
             if (this.getSize() == 1 || this.world.difficulty != EnumDifficulty.PEACEFUL) {
                 BiomeBase biomebase = this.world.getBiome(MathHelper.floor(this.locX), MathHelper.floor(this.locZ));
 
-                if (biomebase == BiomeBase.SWAMPLAND && this.locY > 50.0D && this.locY < 70.0D && this.random.nextFloat() < 0.5F && this.random.nextFloat() < this.world.y() && this.world.getLightLevel(MathHelper.floor(this.locX), MathHelper.floor(this.locY), MathHelper.floor(this.locZ)) <= this.random.nextInt(8)) {
+                if (biomebase == BiomeBase.SWAMPLAND && this.locY > 50.0D && this.locY < 70.0D
+                        && this.random.nextFloat() < 0.5F && this.random.nextFloat() < this.world.y()
+                        && this.world.getLightLevel(MathHelper.floor(this.locX), MathHelper.floor(this.locY),
+                                MathHelper.floor(this.locZ)) <= this.random.nextInt(8)) {
                     return super.canSpawn();
                 }
 

@@ -15,7 +15,7 @@ public class EntityBat extends EntityAmbient implements ITrack {
 
 	protected void c() {
 		super.c();
-		this.datawatcher.a(16, new Byte((byte) 0));
+		this.datawatcher.a(16, (byte) 0);
 	}
 
 	protected float bf() {
@@ -79,7 +79,8 @@ public class EntityBat extends EntityAmbient implements ITrack {
 	protected void bn() {
 		super.bn();
 		if (isAsleep()) {
-			if (!this.world.getType(MathHelper.floor(this.locX), (int) this.locY + 1, MathHelper.floor(this.locZ)).r()) {
+			if (!this.world.getType(MathHelper.floor(this.locX), (int) this.locY + 1, MathHelper.floor(this.locZ))
+					.r()) {
 				setAsleep(false);
 				this.world.a((EntityHuman) null, 1015, (int) this.locX, (int) this.locY, (int) this.locZ, 0);
 			} else {
@@ -95,8 +96,11 @@ public class EntityBat extends EntityAmbient implements ITrack {
 			if (this.h != null && (!this.world.isEmpty(this.h.x, this.h.y, this.h.z) || this.h.y < 1)) {
 				this.h = null;
 			}
-			if (this.h == null || this.random.nextInt(30) == 0 || this.h.e((int) this.locX, (int) this.locY, (int) this.locZ) < 4.0F) {
-				this.h = new ChunkCoordinates((int) this.locX + this.random.nextInt(7) - this.random.nextInt(7), (int) this.locY + this.random.nextInt(6) - 2, (int) this.locZ + this.random.nextInt(7) - this.random.nextInt(7));
+			if (this.h == null || this.random.nextInt(30) == 0
+					|| this.h.e((int) this.locX, (int) this.locY, (int) this.locZ) < 4.0F) {
+				this.h = new ChunkCoordinates((int) this.locX + this.random.nextInt(7) - this.random.nextInt(7),
+						(int) this.locY + this.random.nextInt(6) - 2,
+						(int) this.locZ + this.random.nextInt(7) - this.random.nextInt(7));
 			}
 			final double d1 = this.h.x + 0.5D - this.locX;
 			final double d2 = this.h.y + 0.1D - this.locY;
@@ -108,7 +112,8 @@ public class EntityBat extends EntityAmbient implements ITrack {
 			final float f2 = MathHelper.g(f1 - this.yaw);
 			this.be = 0.5F;
 			this.yaw += f2;
-			if (this.random.nextInt(100) == 0 && this.world.getType(MathHelper.floor(this.locX), (int) this.locY + 1, MathHelper.floor(this.locZ)).r()) {
+			if (this.random.nextInt(100) == 0 && this.world
+					.getType(MathHelper.floor(this.locX), (int) this.locY + 1, MathHelper.floor(this.locZ)).r()) {
 				setAsleep(true);
 			}
 		}
@@ -157,7 +162,7 @@ public class EntityBat extends EntityAmbient implements ITrack {
 		final int k = MathHelper.floor(this.locZ);
 		final int m = this.world.getLightLevel(j, i, k);
 		byte b = 4;
-		//Calendar calendar = this.world.V();
+		// Calendar calendar = this.world.V();
 		if (this.isSpookySeason(this.world.V())) { // Reaper
 			b = 7;
 		} else if (this.random.nextBoolean()) {
@@ -168,20 +173,22 @@ public class EntityBat extends EntityAmbient implements ITrack {
 		}
 		return super.canSpawn();
 	}
-	
+
 	// Reaper
 	private boolean isSpookySeason = false;
 	private final int ONE_HOUR = 20 * 60 * 60;
 	private int lastSpookyCheck = -ONE_HOUR;
+
 	private boolean isSpookySeason(final Calendar calendar) {
 		if (net.minecraft.server.MinecraftServer.currentTick - this.lastSpookyCheck > ONE_HOUR) {
-			this.isSpookySeason = calendar.get(2) + 1 == 10 && calendar.get(5) >= 20 || calendar.get(2) + 1 == 11 && calendar.get(5) <= 3;
+			this.isSpookySeason = calendar.get(2) + 1 == 10 && calendar.get(5) >= 20
+					|| calendar.get(2) + 1 == 11 && calendar.get(5) <= 3;
 			this.lastSpookyCheck = net.minecraft.server.MinecraftServer.currentTick;
 		}
 		return this.isSpookySeason;
 	}
 	// Reaper
-	
+
 	@Override
 	public void track(EntityTracker tracker) {
 		tracker.addEntity(this, 80, 3);

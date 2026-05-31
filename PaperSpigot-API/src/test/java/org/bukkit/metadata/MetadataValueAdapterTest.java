@@ -16,10 +16,10 @@ public class MetadataValueAdapterTest {
         assertEquals(mv.getOwningPlugin(), this.plugin);
 
         // Check value-getting and invalidation.
-        assertEquals(new Integer(1), mv.value());
-        assertEquals(new Integer(2), mv.value());
+        assertEquals(1, mv.value());
+        assertEquals(2, mv.value());
         mv.invalidate();
-        assertEquals(new Integer(1), mv.value());
+        assertEquals(1, mv.value());
     }
 
     @Test

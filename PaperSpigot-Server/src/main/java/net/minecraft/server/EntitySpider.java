@@ -11,7 +11,7 @@ public class EntitySpider extends EntityMonster {
 
     protected void c() {
         super.c();
-        this.datawatcher.a(16, new Byte((byte) 0));
+        this.datawatcher.a(16, (byte) 0);
     }
 
     public void tick() {
@@ -60,7 +60,8 @@ public class EntitySpider extends EntityMonster {
 
         if (f1 > 0.5F && this.random.nextInt(100) == 0) {
             // CraftBukkit start
-            EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), null, EntityTargetEvent.TargetReason.FORGOT_TARGET);
+            EntityTargetEvent event = new EntityTargetEvent(this.getBukkitEntity(), null,
+                    EntityTargetEvent.TargetReason.FORGOT_TARGET);
             this.world.getServer().getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {
@@ -77,7 +78,7 @@ public class EntitySpider extends EntityMonster {
                 if (this.onGround) {
                     double d0 = entity.locX - this.locX;
                     double d1 = entity.locZ - this.locZ;
-                    float f2 = (float)Math.sqrt(d0 * d0 + d1 * d1);
+                    float f2 = (float) Math.sqrt(d0 * d0 + d1 * d1);
 
                     this.motX = d0 / (double) f2 * 0.5D * 0.800000011920929D + this.motX * 0.20000000298023224D;
                     this.motZ = d1 / (double) f2 * 0.5D * 0.800000011920929D + this.motZ * 0.20000000298023224D;
@@ -104,7 +105,8 @@ public class EntitySpider extends EntityMonster {
         return this.bZ();
     }
 
-    public void as() {}
+    public void as() {
+    }
 
     public EnumMonsterType getMonsterType() {
         return EnumMonsterType.ARTHROPOD;
@@ -138,13 +140,17 @@ public class EntitySpider extends EntityMonster {
 
             entityskeleton.setPositionRotation(this.locX, this.locY, this.locZ, this.yaw, 0.0F);
             entityskeleton.prepare((GroupDataEntity) null);
-            this.world.addEntity(entityskeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit - add SpawnReason
+            this.world.addEntity(entityskeleton, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit
+                                                                                                                 // -
+                                                                                                                 // add
+                                                                                                                 // SpawnReason
             entityskeleton.mount(this);
         }
 
         if (object == null) {
             object = new GroupDataSpider();
-            if (this.world.difficulty == EnumDifficulty.HARD && this.world.random.nextFloat() < 0.1F * this.world.b(this.locX, this.locY, this.locZ)) {
+            if (this.world.difficulty == EnumDifficulty.HARD
+                    && this.world.random.nextFloat() < 0.1F * this.world.b(this.locX, this.locY, this.locZ)) {
                 ((GroupDataSpider) object).a(this.world.random);
             }
         }
