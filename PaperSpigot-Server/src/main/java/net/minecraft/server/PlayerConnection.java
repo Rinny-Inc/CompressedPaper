@@ -138,6 +138,8 @@ public class PlayerConnection implements PacketPlayInListener {
 	// Store the last block right clicked and what type it was
 	private Item lastMaterial;
 
+	private int lastAttackTick = -1; // Rinny - Server Authority
+
 	public CraftPlayer getPlayer() {
 		return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
 	}
@@ -1246,6 +1248,10 @@ public class PlayerConnection implements PacketPlayInListener {
 			return; // CraftBukkit
 		this.player.resetIdleTimer();
 		if (packetplayinarmanimation.d() == 1) {
+			// Rinny - Server Authority
+			if (MinecraftServer.currentTick - this.lastAttackTick < 1) {
+				return;
+			}
 			// CraftBukkit start - Raytrace to look for 'rogue armswings'
 			final float f = 1.0F;
 			final float f1 = this.player.lastPitch + (this.player.pitch - this.player.lastPitch) * f;
@@ -1441,6 +1447,13 @@ public class PlayerConnection implements PacketPlayInListener {
 									.warning("Player " + this.player.getName() + " tried to attack an invalid entity");
 							return;
 						}
+
+						// Rinny - Server Authority & Limit 1 attack per tick (less spammy for high
+						// clicks)
+						if (MinecraftServer.currentTick - this.lastAttackTick < 1) {
+							return;
+						}
+						this.lastAttackTick = MinecraftServer.currentTick;
 
 						if (this.player.isBlocking()) {
 							this.player.bA();
