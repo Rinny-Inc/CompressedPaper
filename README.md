@@ -1,6 +1,6 @@
 # CompressedPaper 2016-2026
 
-"Compressed had its era. Now it's time for Coral to rise." 
+"Compressed had its era. Now it's time for [Coral](https://github.com/Rinny-Inc/Coral) to rise." 
 - Noksio 2026
 
 Everything I've done is commented -> // Rinny
@@ -10,4 +10,4 @@ Known bug:
 
 ## Benchmark with 10 bots + me
 Bots are moving, attacking each others... like real players.
-![Coral Benchmark](https://i.imgur.com/T0oSWTx.png)
+![Compressed Benchmark](https://i.imgur.com/T0oSWTx.png)
