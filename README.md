@@ -10,7 +10,7 @@ Known bug:
 
 - Already Decorating when generating a default world
 
-## ![Benchmark](./BENCHMARK.md)
+## [Benchmark](./BENCHMARK.md)
 
 ### with 10 bots + me
 
