@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 jobs:
   build:
@@ -48,11 +47,6 @@ jobs:
 
       - name: Build release artifacts
         run: mvn -B clean package source:jar --file pom.xml -DskipTests
-
-      - name: Publish Maven package to GitHub Packages
-        run: mvn -B deploy --file pom.xml -DskipTests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release and upload artifacts
         uses: softprops/action-gh-release@v3
