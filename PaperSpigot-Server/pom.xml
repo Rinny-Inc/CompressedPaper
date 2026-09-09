@@ -29,17 +29,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <repositories>
-    <repository>
-      <id>repobo-snap</id>
-      <url>http://repo.caseif.net/content/groups/public</url>
-    </repository>
-  </repositories>
-
   <pluginRepositories>
     <pluginRepository>
-      <id>bukkit-plugins</id>
-      <url>http://repo.caseif.net/content/groups/public</url>
+        <id>md_5-public</id>
+        <url>https://repo.md-5.net/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -79,7 +72,7 @@
     <dependency>
       <groupId>org.github.paperspigot</groupId>
       <artifactId>minecraft-server</artifactId>
-      <version>${project.version}-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
