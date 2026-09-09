@@ -2,14 +2,16 @@ name: Java CI and Release
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     tags:
       - "v*"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
   build:
@@ -22,17 +24,17 @@ jobs:
       - name: Set up JDK 26
         uses: actions/setup-java@v6
         with:
-          java-version: '26'
-          distribution: 'temurin'
+          java-version: "26"
+          distribution: "temurin"
           cache: maven
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-  release:
-    name: Create Release
+  publish:
+    name: Publish to GitHub Packages
     needs: build
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
 
     steps:
@@ -41,17 +43,38 @@ jobs:
       - name: Set up JDK 26
         uses: actions/setup-java@v6
         with:
-          java-version: '26'
-          distribution: 'temurin'
+          java-version: "26"
+          distribution: "temurin"
           cache: maven
+          server-id: github
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_TOKEN
 
-      - name: Build release artifacts
-        run: mvn -B clean package source:jar --file pom.xml -DskipTests
+      - name: Set release version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          VP=org.codehaus.mojo:versions-maven-plugin:2.18.0
+          mvn -B $VP:set -DnewVersion="$VERSION" \
+            -DprocessAllModules -DgenerateBackupPoms=false
+          mvn -B $VP:set-scm-tag -DnewTag="$GITHUB_REF_NAME" \
+            -DgenerateBackupPoms=false
+
+      - name: Deploy
+        run: mvn -B deploy -DskipTests --file pom.xml
+        env:
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Collect artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p staging
+          find . -path '*/target/*.jar' ! -name 'original-*.jar' -exec cp {} staging/ \;
 
       - name: Create GitHub Release and upload artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
-          files: |
-            **/target/*.jar
-            **/target/*.pom
+          files: staging/*.jar

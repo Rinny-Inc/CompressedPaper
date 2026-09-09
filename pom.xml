@@ -1,16 +1,40 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.github.paperspigot</groupId>
     <artifactId>paperspigot-parent</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>1.7.10-R0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>PaperSpigot-Parent</name>
     <description>Parent project for all PaperSpigot modules.</description>
-    <url>https://github.com/PaperSpigot/Spigot</url>
+    <url>https://github.com/Rinny-Inc/CompressedPaper</url>
+
+    <organization>
+        <name>Rinny-Inc</name>
+        <url>https://github.com/Rinny-Inc</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection
+        >scm:git:https://github.com/Rinny-Inc/CompressedPaper.git</connection>
+        <developerConnection
+        >scm:git:git@github.com:Rinny-Inc/CompressedPaper.git</developerConnection>
+        <url>https://github.com/Rinny-Inc/CompressedPaper</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>MinecraftServer</module>
@@ -21,6 +45,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
     <repositories>
@@ -32,12 +57,67 @@
 
     <distributionManagement>
         <repository>
-            <id>md_5-releases</id>
-            <url>https://repo.md-5.net/content/repositories/releases/</url>
+            <id>github</id>
+            <name>GitHub Rinny-Inc Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Rinny-Inc/CompressedPaper</url>
         </repository>
         <snapshotRepository>
-            <id>md_5-snapshots</id>
-            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
+            <id>github</id>
+            <name>GitHub Rinny-Inc Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Rinny-Inc/CompressedPaper</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.11.2</version>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <failOnError>false</failOnError>
+                        <quiet>true</quiet>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
