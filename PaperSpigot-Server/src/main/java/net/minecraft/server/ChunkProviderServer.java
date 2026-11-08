@@ -93,7 +93,7 @@ public class ChunkProviderServer implements IChunkProvider {
     }
 
     public void b() {
-    	this.chunks.values().forEach(map -> this.queueUnload(map.locX, map.locX));
+    	this.chunks.values().forEach(map -> this.queueUnload(map.locX, map.locZ)); // Rinny
     	/*
         Iterator iterator = this.chunks.values().iterator(); // CraftBukkit
 

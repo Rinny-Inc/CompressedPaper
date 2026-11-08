@@ -990,6 +990,7 @@ public class Chunk {
         return false;
     }
 
+    // Rinny start
     /*public void loadNearby(IChunkProvider ichunkprovider, IChunkProvider ichunkprovider1, int i, int j) {
         if (!this.done && ichunkprovider.isChunkLoaded(i + 1, j + 1) && ichunkprovider.isChunkLoaded(i, j + 1) && ichunkprovider.isChunkLoaded(i + 1, j)) {
             ichunkprovider.getChunkAt(ichunkprovider1, i, j);
@@ -1008,49 +1009,23 @@ public class Chunk {
         }
     }*/
     
-    // TODO: test
+    private static final byte[][] POPULATE_ORDER = { {0, 0}, {-1, 0}, {0, -1}, {-1, -1} };
     public void loadNearby(IChunkProvider ichunkprovider, IChunkProvider ichunkprovider1, int i, int j) {
-        Chunk[][] chunks = new Chunk[3][3];
-        boolean[][] loaded = new boolean[3][3];
+        for (byte[] offset : POPULATE_ORDER) {
+            final int x = i + offset[0];
+            final int z = j + offset[1];
 
-        for (byte dx = -1; dx <= 1; dx++) {
-            for (byte dz = -1; dz <= 1; dz++) {
-                int x = i + dx;
-                int z = j + dz;
-                loaded[dx + 1][dz + 1] = ichunkprovider.isChunkLoaded(x, z);
-                if (loaded[dx + 1][dz + 1]) {
-                    chunks[dx + 1][dz + 1] = ichunkprovider.getOrCreateChunk(x, z);
-                }
-            }
-        }
-
-        final byte[][] neighbors = {
-            {0, 0, 1, 1}, 
-            {-1, 0, -1, 1},
-            {0, -1, 1, -1},
-            {-1, -1, 0, -1}
-        };
-
-        for (byte[] neighbor : neighbors) {
-            int x = neighbor[0] + 1;
-            int z = neighbor[1] + 1;
-
-            if (loaded[x][z] && !chunks[x][z].done) {
-                boolean allLoaded = true;
-                for (byte k = 2; k < neighbor.length; k += 2) {
-                    int nx = neighbor[k] + 1;
-                    int nz = neighbor[k + 1] + 1;
-                    if (!loaded[nx][nz]) {
-                        allLoaded = false;
-                        break;
-                    }
-                }
-                if (allLoaded) {
-                    ichunkprovider.getChunkAt(ichunkprovider1, i + neighbor[0], j + neighbor[1]);
-                }
+            if (ichunkprovider.isChunkLoaded(x, z)
+                && ichunkprovider.isChunkLoaded(x + 1, z)
+                && ichunkprovider.isChunkLoaded(x, z + 1)
+                && ichunkprovider.isChunkLoaded(x + 1, z + 1)
+                && !ichunkprovider.getOrCreateChunk(x, z).done) 
+            {
+                ichunkprovider.getChunkAt(ichunkprovider1, x, z);
             }
         }
     }
+    // Rinny end
 
     public int d(int i, int j) {
     	final int k = i | j << 4;
