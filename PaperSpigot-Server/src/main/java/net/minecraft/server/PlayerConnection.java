@@ -1400,7 +1400,7 @@ public class PlayerConnection implements PacketPlayInListener {
 			return; // CraftBukkit
 		// Rinny start - vanilla cannot attack or interact with an inventory open
 		if (getFlag(FLAG_INVENTORY_OPEN)) {
-			logger.warn(this.player.getName() + " used an entity with their inventory open (" | packetplayinuseentity.c() | ")");
+			logger.warn(this.player.getName() + " used an entity with their inventory open (" + packetplayinuseentity.c() + ")");
 			return;
 		}
 		// Rinny end
