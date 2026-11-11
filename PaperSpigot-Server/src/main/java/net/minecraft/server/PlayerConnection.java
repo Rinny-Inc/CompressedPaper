@@ -81,6 +81,7 @@ public class PlayerConnection implements PacketPlayInListener {
 	private static final byte FLAG_DISCONNECTING = 1 << 2;
 	private static final byte FLAG_JUST_TELEPORTED = 1 << 3;
 	private static final byte FLAG_HAS_MOVED = 1 << 4;
+	private static final byte FLAG_INVENTORY_OPEN = 1 << 5;
 
 	private byte flags;
 
@@ -139,6 +140,8 @@ public class PlayerConnection implements PacketPlayInListener {
 	private Item lastMaterial;
 
 	private int lastAttackTick = -1; // Rinny - Server Authority
+	// Rinny
+	private int inventory_grace_until;
 
 	public CraftPlayer getPlayer() {
 		return (this.player == null) ? null : (CraftPlayer) this.player.getBukkitEntity();
@@ -938,6 +941,16 @@ public class PlayerConnection implements PacketPlayInListener {
 		if (packet == null || this.getFlag(FLAG_PROCESSED_DISCONNECT)) {
 			return;
 		}
+		// Rinny start
+		if (packet instanceof PacketPlayOutOpenWindow 
+			|| packet instanceof PacketPlayOutCloseWindow 
+			|| packet instanceof PacketPlayOutRespawn
+			|| packet instanceof PacketPlayOutOpenSignEditor) 
+		{
+			setFlag(FLAG_INVENTORY_OPEN, false);
+			this.inventory_grace_until = this.e + 2 + Math.min(40, this.player.ping / 50);
+		}
+		// Rinny end
 		if (packet instanceof PacketPlayOutEntityVelocity && player.vehicle != null) { // Rinny - don't send Velocity
 																						// when riding
 			return;
@@ -1371,12 +1384,26 @@ public class PlayerConnection implements PacketPlayInListener {
 		 */
 	}
 
+	// Rinny start
+	private void armInventory() {
+		if (this.e > this.inventory_grace_until && this.player.activeContainer == this.player.defaultContainer) {
+			setFlag(FLAG_INVENTORY_OPEN, true);
+		}
+	}
+	// Rinny end
+
 	// TODO: shortcut
 	public void a(PacketPlayInUseEntity packetplayinuseentity) {
 		if (packetplayinuseentity.c() == null)
 			return; // Spigot - protocol patch
 		if (this.player.dead)
 			return; // CraftBukkit
+		// Rinny start - vanilla cannot attack or interact with an inventory open
+		if (getFlag(FLAG_INVENTORY_OPEN)) {
+			logger.warn(this.player.getName() + " used an entity with their inventory open (" | packetplayinuseentity.c() | ")");
+			return;
+		}
+		// Rinny end
 		final WorldServer worldserver = this.minecraftServer.getWorldServer(this.player.dimension);
 		final Entity entity = packetplayinuseentity.a((World) worldserver);
 		// Spigot Start
@@ -1479,6 +1506,7 @@ public class PlayerConnection implements PacketPlayInListener {
 
 		switch (ClientCommandOrdinalWrapper.a[enumclientcommand.ordinal()]) {
 			case 1:
+				setFlag(FLAG_INVENTORY_OPEN, false); // Rinny
 				if (this.player.viewingCredits) {
 					this.minecraftServer.getPlayerList().changeDimension(this.player, 0,
 							PlayerTeleportEvent.TeleportCause.END_PORTAL); // CraftBukkit - reroute logic through custom
@@ -1508,6 +1536,7 @@ public class PlayerConnection implements PacketPlayInListener {
 				return;
 			case 3:
 				this.player.a((Statistic) AchievementList.f);
+				this.armInventory(); // Rinny
 				return;
 		}
 	}
@@ -1525,6 +1554,9 @@ public class PlayerConnection implements PacketPlayInListener {
 		if (this.player.dead)
 			return; // CraftBukkit
 
+		if (packetplayinwindowclick.c() == 0) {
+			this.armInventory(); // Rinny
+		}
 		this.player.resetIdleTimer();
 		if (!this.player.activeContainer.a(this.player))
 			return; // PaperSpigot - check if player is able to use this container
